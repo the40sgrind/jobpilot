@@ -1,129 +1,93 @@
-🧭 JobPilot — AI-Powered CV & Job Application Assistant
+🧭 JobPilot — AI-Powered Job Application Assistant
 
-Your complete AI career companion: CVs, cover letters, ATS optimization, and interview prep — for the Nordics and beyond.
+Fast • Global • Accurate
 
-JobPilot is a multi-language, AI-powered tool that helps job seekers improve their job applications fast.
-It analyzes your CV and job ad, shows a match score, rewrites your CV, generates tailored cover letters, translates documents (EN/FI/SV), and prepares you for interviews.
+JobPilot helps job seekers instantly transform their CVs, match them to job ads with AI, generate tailored cover letters, translate everything into 7 languages, and prepare for interviews — all inside one streamlined tool.
 
-The app is built with Streamlit (frontend) and Python modules (backend), with a strong focus on:
+====================================================
 
-Nordic job market standards (Finland, Sweden, Nordics)
+🌍 Global Language Support (v2.0)
 
-Clean UX
+JobPilot now supports a fully international UI and translation pipeline:
 
-GDPR compliance (no CV storage)
+English
 
-ATS-aware CV structure
+Finnish
 
-Authentic, human-sounding writing
+Swedish
 
-✨ Features (MVP v1.0)
+Spanish
 
-Current features:
+Portuguese (Brazil)
 
-Job Ad Input
+French
 
-Paste any job advertisement text
+German
 
-JobPilot analyzes requirements and key skills
+Every UI component, prompt, and model interaction is localized.
 
-CV Upload & Parsing
+====================================================
 
-Upload CV as PDF or TXT
+✨ Core Features (MVP Completed)
 
-Extracts text and skills
+AI Job Match Analysis
+Paste a job ad + upload your CV → JobPilot generates:
 
-Detects CV language (EN/FI/SV)
+Match Score (%)
 
-Match Analysis
+Missing Skills (in CV language)
 
-Match score (0–100)
+AI Summary (in UI language)
 
-Missing skills list
+CV Rewrite Engine
+Rewrite your CV into:
 
-Summary of fit in UI language (EN/FI/SV), independent of CV or job ad language
+Bullet Format
 
-Designed for consistency and predictability (no random language flips)
+Paragraph Format
 
-CV Rewrite
-Rewrite CV into:
-
-Bullet-point format (recruiter friendly)
-
-Paragraph format (easy to read)
-
-Hybrid format
-Uses job ad context to highlight relevant strengths.
+Hybrid Format
 
 Cover Letter Generator
+One click → fully personalized cover letter tailored to the job.
 
-Always generated in the job ad language
+CV & Cover Letter Translator
+Translate into all 7 supported languages.
 
-Tailored to the specific job and CV content
+Multilingual AI Interview Preparation
+Generates:
 
-Translations (EN / FI / SV)
+Behavioral questions (STAR)
 
-CV translation
+Cultural fit questions
 
-Cover letter translation
+Leadership questions
 
-Full-text output (never “no translation needed”)
+Salary & expectations
 
-Interview Preparation AI
-Generates interview questions + model answers:
+CV red flags
 
-Behavioral (STAR)
+Expert tips
 
-Cultural fit
+====================================================
 
-Leadership/responsibility
+🔥 Global Features Added in v2.0
 
-Potential weaknesses/red flags
+Full UI localization (7 languages)
 
-Salary expectations
+Accurate multilingual summary translations (including PT-BR)
 
-Final expert tips
-Always generated in the job ad language.
+Missing Skills always shown in the CV’s original language
 
-🔥 Upcoming Features (v2+ Roadmap)
+Improved language detection
 
-ATS Scanner (High Priority)
-Ensures CVs & cover letters pass real Applicant Tracking Systems.
+Clean dropdown and translation mapping
 
-Formatting checks
+Centralized text management system
 
-Keyword coverage
+====================================================
 
-ATS flags (green/yellow/red)
-
-Improvement suggestions
-
-(Future) One-click ATS optimization for premium users
-
-Human-Expert Template Library
-Blend user CVs with anonymized Nordic writing structures.
-
-30–100 EN/FI/SV templates
-
-More human, less “AI-slop”
-
-Boosts recruiter trust
-
-Major value for premium tiers
-
-Bias & Authenticity Auditor
-Detects and improves issues like:
-
-Biased wording
-
-Overly formal / repetitive AI phrasing
-
-Readability problems
-
-AI detectability patterns
-Helps meet EU AI Act & Nordic fairness expectations.
-
-🧱 Project Structure
+🗂 Project Structure
 
 JobPilot/
 app/
@@ -136,175 +100,64 @@ cv_rewriter.py
 cover_letter.py
 translator.py
 language_utils.py
-JOBPILOT_LLM_BRIEF.md
-JOBPILOT_BUGLOG.md
-requirements.txt
+assets/
 README.md
 LICENSE
+requirements.txt
+
+====================================================
 
 🛠 Tech Stack
 
-Frontend: Streamlit
+Python 3.11
 
-Backend: Python (modular architecture)
+Streamlit
 
-Parsing: PyPDF2 + custom normalization
+OpenAI API
 
-AI Models: OpenAI / Grok style LLMs
+PyPDF2
 
-Languages: English, Finnish, Swedish
+Custom AI rewrite & interview pipelines
 
-Planned Hosting:
+====================================================
 
-Streamlit Cloud → app.getjobpilot.fi
-
-WordPress → getjobpilot.fi
-
-🔐 Privacy & GDPR
-
-JobPilot follows GDPR-first principles:
-
-CVs, job ads, rewrites, and analyses are not stored
-
-All processing happens temporarily in-memory during the session
-
-No user accounts in MVP
-
-No profiling with legal effects
-
-Payments (future) handled by Stripe — JobPilot never stores card data
-
-Full Privacy Policy: https://getjobpilot.fi/privacy-policy
-
-🚀 Running JobPilot Locally (for contributors)
-
-If you want to run JobPilot on your own machine:
-
-1. Clone the repository
-(Contributors only — Rode already has the project locally.)
-
-git clone https://github.com/YOUR_USERNAME/jobpilot.git
-
-cd jobpilot
-
-2. Create a virtual environment
-
-python3 -m venv venv
-source venv/bin/activate # macOS / Linux
-
-venv\Scripts\activate.bat # Windows
-
-3. Install dependencies
-
-pip install -r requirements.txt
-
-4. Set your API key
-
-export OPENAI_API_KEY="your_real_api_key_here"
-
-5. Run the app
-
-streamlit run app/app.py
-
-Open the browser link shown (usually http://localhost:8501
-).
-
-🌐 Deployment (Planned)
-Streamlit Cloud Deployment
-
-Push repo to GitHub
-
-Log into Streamlit Cloud
-
-Create “New App” → select JobPilot repo
-
-Set entry point to: app/app.py
-
-Add OPENAI_API_KEY in Streamlit Secrets
-
-Deploy
-
-Custom Domain (Planned)
-
-Marketing site → https://getjobpilot.fi
-
-App domain → https://app.getjobpilot.fi
- (CNAME → Streamlit)
-
-🛣 Roadmap (High Level)
-
-✔ MVP Completed
-
-CV parsing
-
-Job ad analysis
-
-Match score
-
-CV rewrites
-
-Cover letters
-
-Translation
-
-Interview prep
-
-🚧 v2+ In Development
+🚧 Upcoming Features (v3.x Roadmap)
 
 ATS Scanner
 
-Template Library
+Human Template Library
 
 Bias & Authenticity Auditor
 
-Pricing + Stripe billing
+Monetization layer (free-tier limits + Stripe Checkout)
 
-Analytics (Plausible)
+====================================================
 
-User accounts + saved CVs
+🧪 Running Locally
 
-Mobile app (FlutterFlow)
+cd JobPilot
+streamlit run app/app.py
 
-Better UI & localization
+Set your API key:
 
-🤝 Contributing
+export OPENAI_API_KEY="your_key_here"
 
-JobPilot is early-stage.
-If you’re interested in contributing to:
+====================================================
 
-Nordic job market logic
+📝 License
 
-ATS parsing
+MIT License.
 
-UX/UI
+====================================================
 
-Language outputs
+🚀 Contributing
 
-You can open an issue or submit a pull request.
+Pull requests and feature suggestions are welcome.
 
-📬 Contact
+====================================================
 
-Founder: Rodrigo (“Rode”)
-Email: support@getjobpilot.fi
+⭐ Support
 
-Website: https://getjobpilot.fi
+If you like the project, give it a star!
 
-📄 License (Proprietary)
-
-You may:
-
-Read the code
-
-Run it locally
-
-Learn from it
-
-You may NOT:
-
-Use it commercially
-
-Host it publicly
-
-Sell derivative versions
-
-See LICENSE for full terms.
+====================================================
