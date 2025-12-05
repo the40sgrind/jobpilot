@@ -1,60 +1,68 @@
 # backend/translator.py
 # Universal translator for CV + Cover Letter + Summary
-# Always returns a FULL translation — never "no translation needed"
+# Supports EN / FI / SV / ES / PT-BR / FR / DE
 
 import os
 from openai import OpenAI
 
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-# Supported target language mapping
+# --------------------------------------------------------------
+# GLOBAL LANGUAGE MAP
+# --------------------------------------------------------------
+
 LANGUAGE_CODES = {
     "English": "en",
     "Finnish": "fi",
     "Swedish": "sv",
+    "Spanish": "es",
+    "Portuguese": "pt",
+    "French": "fr",
+    "German": "de",
 }
 
-# High-quality linguistic instructions
 TRANSLATION_INSTRUCTIONS = {
-    "en": "Translate the text into natural, fluent, professional English.",
+    "en": "Translate the text into fluent, natural, professional English.",
     "fi": "Käännä teksti luonnolliselle, sujuvalle ja ammattimaiselle suomen kielelle.",
     "sv": "Översätt texten till naturlig, flytande och professionell svenska.",
+    "es": "Traduce el texto al español de manera natural, fluida y profesional.",
+    "pt": "Traduza o texto para um português natural, fluente e profissional.",
+    "fr": "Traduire le texte en français naturel, fluide et professionnel.",
+    "de": "Übersetze den Text ins natürliche, flüssige und professionelle Deutsch.",
 }
 
+
+# --------------------------------------------------------------
+# CORE TRANSLATION FUNCTION
+# --------------------------------------------------------------
 
 def translate_text(input_text: str, target_language: str) -> str:
     """
-    Translates text between EN/FI/SV.
-    ALWAYS produces a translated version.
-    NEVER returns the original text unless target is English.
+    Translates text across all 7 supported languages.
+    Always returns a translated version.
+    Never returns unchanged source text.
     """
 
     lang_code = LANGUAGE_CODES.get(target_language, "en")
     instruction = TRANSLATION_INSTRUCTIONS[lang_code]
 
-    # ----------- IMPORTANT FIX -----------
-    # GPT was sometimes keeping English when translating → FI.
-    # These rules HARD-FORCE a real translation.
-    # -------------------------------------
-
     prompt = f"""
-You are a professional translator specializing in job applications.
+You are a senior professional translator specializing in job applications.
 
-Translate the following text into **{target_language}** with the following rules:
+Translate the following text into **{target_language}**.
 
 ### HARD RULES
 - ALWAYS output a full translation.
-- NEVER keep the original English sentences.
-- NEVER reply with “no translation needed”.
-- Do NOT skip or shorten anything.
-- Preserve structure and facts exactly.
-- Keep tone natural, fluent, and professional.
-- Output *only* the translated text.
+- NEVER keep original sentences.
+- NEVER respond with “no translation needed”.
+- Do NOT shorten or change meaning.
+- Preserve structure.
+- Output only the translated text.
 
-### TARGET LANGUAGE STYLE
+### STYLE
 {instruction}
 
-### TEXT TO TRANSLATE
+### TEXT
 {input_text}
 """
 
@@ -66,12 +74,11 @@ Translate the following text into **{target_language}** with the following rules
 
     translated = response.choices[0].message.content.strip()
 
-    # Safety fallback: if GPT returns identical English text when target ≠ English
-    if target_language != "English" and translated.strip() == input_text.strip():
-        # Force a retry using a stricter directive
+    # Extra safety check
+    if translated.strip() == input_text.strip():
         retry_prompt = f"""
-Translate EVERYTHING below into {target_language}.
-Do NOT leave any English words unchanged.
+Translate EVERYTHING into {target_language}.
+Do NOT leave any parts unchanged.
 
 TEXT:
 {input_text}

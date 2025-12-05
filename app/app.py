@@ -27,17 +27,13 @@ if "ui_lang" not in st.session_state:
 ui_lang = st.session_state.ui_lang.strip().lower()
 
 
-
 # --------------------------------------------------------------
 # GLOBAL CSS
 # --------------------------------------------------------------
 st.markdown("""
 <style>
 
-    .flag-bar button,
-    div[data-testid="stButton"] > button[title="🇫🇮"],
-    div[data-testid="stButton"] > button[title="🇬🇧"],
-    div[data-testid="stButton"] > button[title="🇸🇪"] {
+    .flag-bar button {
         font-size: 52px !important;
         line-height: 1 !important;
         padding: 0px 6px !important;
@@ -68,14 +64,18 @@ st.markdown("""
 
 
 # --------------------------------------------------------------
-# FLAG SWITCHER — WORKING VERSION
+# FLAG SWITCHER — GLOBAL VERSION (7 LANGUAGES)
 # --------------------------------------------------------------
 
 fi_png = "https://flagcdn.com/w40/fi.png"
 en_png = "https://flagcdn.com/w40/gb.png"
 sv_png = "https://flagcdn.com/w40/se.png"
+es_png = "https://flagcdn.com/w40/es.png"
+pt_png = "https://flagcdn.com/w40/br.png"
+fr_png = "https://flagcdn.com/w40/fr.png"
+de_png = "https://flagcdn.com/w40/de.png"
 
-col1, col2, col3 = st.columns([0.15, 0.15, 0.15])
+col1, col2, col3, col4, col5, col6, col7 = st.columns(7)
 
 with col1:
     if st.button(f"![]({fi_png})", key="flag_fi"):
@@ -89,15 +89,31 @@ with col3:
     if st.button(f"![]({sv_png})", key="flag_sv"):
         st.session_state.ui_lang = "sv"
 
+with col4:
+    if st.button(f"![]({es_png})", key="flag_es"):
+        st.session_state.ui_lang = "es"
+
+with col5:
+    if st.button(f"![]({pt_png})", key="flag_pt"):
+        st.session_state.ui_lang = "pt-br"
+
+with col6:
+    if st.button(f"![]({fr_png})", key="flag_fr"):
+        st.session_state.ui_lang = "fr"
+
+with col7:
+    if st.button(f"![]({de_png})", key="flag_de"):
+        st.session_state.ui_lang = "de"
+
 ui_lang = st.session_state.ui_lang.strip().lower()
 
+
 # --------------------------------------------------------------
-# LANGUAGE SANITY CHECK — FORCE ui_lang TO ALWAYS BE A STRING
+# LANGUAGE SANITY CHECK
 # --------------------------------------------------------------
 
 val = st.session_state.ui_lang
 
-# Normalize ANY weird Streamlit type into a clean string: "en", "fi", "sv"
 if isinstance(val, list):
     ui_lang = val[0].strip().lower()
 else:
@@ -105,31 +121,92 @@ else:
 
 
 # --------------------------------------------------------------
-# TRANSLATOR CONFIG
+# TRANSLATION SYSTEM — CLEAN GLOBAL VERSION
 # --------------------------------------------------------------
 
 TRANSLATOR_LANGS = {
     "en": "English",
     "fi": "Finnish",
     "sv": "Swedish",
+    "es": "Spanish",
+    "pt-br": "Portuguese",
+    "fr": "French",
+    "de": "German"
 }
 
 TRANSLATOR_DROPDOWN = {
-    "en": ["English", "Finnish", "Swedish"],
-    "fi": ["Englanti", "Suomi", "Ruotsi"],
-    "sv": ["Engelska", "Finska", "Svenska"],
+    "en": ["English", "Finnish", "Swedish", "Spanish", "Portuguese", "French", "German"],
+    "fi": ["Englanti", "Suomi", "Ruotsi", "Espanja", "Portugali", "Ranska", "Saksa"],
+    "sv": ["Engelska", "Finska", "Svenska", "Spanska", "Portugisiska", "Franska", "Tyska"],
+    "es": ["Inglés", "Finés", "Sueco", "Español", "Portugués", "Francés", "Alemán"],
+    "pt-br": ["Inglês", "Finlandês", "Sueco", "Espanhol", "Português", "Francês", "Alemão"],
+    "fr": ["Anglais", "Finnois", "Suédois", "Espagnol", "Portugais", "Français", "Allemand"],
+    "de": ["Englisch", "Finnisch", "Schwedisch", "Spanisch", "Portugiesisch", "Französisch", "Deutsch"],
 }[ui_lang]
 
 TRANSLATOR_MAP = {
+    # English UI
     "English": "English",
     "Finnish": "Finnish",
     "Swedish": "Swedish",
+    "Spanish": "Spanish",
+    "Portuguese": "Portuguese",
+    "French": "French",
+    "German": "German",
+
+    # FI
     "Englanti": "English",
     "Suomi": "Finnish",
     "Ruotsi": "Swedish",
+    "Espanja": "Spanish",
+    "Portugali": "Portuguese",
+    "Ranska": "French",
+    "Saksa": "German",
+
+    # SV
     "Engelska": "English",
     "Finska": "Finnish",
     "Svenska": "Swedish",
+    "Spanska": "Spanish",
+    "Portugisiska": "Portuguese",
+    "Franska": "French",
+    "Tyska": "German",
+
+    # ES
+    "Inglés": "English",
+    "Finés": "Finnish",
+    "Sueco": "Swedish",
+    "Español": "Spanish",
+    "Portugués": "Portuguese",
+    "Francés": "French",
+    "Alemán": "German",
+
+    # PT-BR
+    "Inglês": "English",
+    "Finlandês": "Finnish",
+    "Sueco": "Swedish",
+    "Espanhol": "Spanish",
+    "Português": "Portuguese",
+    "Francês": "French",
+    "Alemão": "German",
+
+    # FR
+    "Anglais": "English",
+    "Finnois": "Finnish",
+    "Suédois": "Swedish",
+    "Espagnol": "Spanish",
+    "Portugais": "Portuguese",
+    "Français": "French",
+    "Allemand": "German",
+
+    # DE
+    "Englisch": "English",
+    "Finnisch": "Finnish",
+    "Schwedisch": "Swedish",
+    "Spanisch": "Spanish",
+    "Portugiesisch": "Portuguese",
+    "Französisch": "French",
+    "Deutsch": "German"
 }
 
 
@@ -167,9 +244,9 @@ else:
 st.markdown(f"### {ui_text('step2_upload', ui_lang)}")
 
 uploaded_file = st.file_uploader(
-    ui_text("upload_cv_short", ui_lang),   # ← translated label
+    ui_text("upload_cv_short", ui_lang),
     type=["pdf", "txt"],
-    help=ui_text("upload_cv_short", ui_lang),   # ← matching help text
+    help=ui_text("upload_cv_short", ui_lang),
     key="cv_uploader"
 )
 
@@ -203,6 +280,8 @@ else:
     cv_text = st.session_state.get("cv_text")
     cv_lang = st.session_state.get("cv_lang")
 
+
+
 # --------------------------------------------------------------
 # EMPTY STATE CARD
 # --------------------------------------------------------------
@@ -231,14 +310,14 @@ analysis_ready = cv_text and job_ad.strip()
 if analysis_ready:
     if st.button(ui_text("run_analysis", ui_lang), key="analysis_btn"):
         with st.spinner("Analyzing…"):
-            # ✅ FIXED: Pass ui_lang to comparator
             result = compare_cv_to_job(cv_text, job_ad.strip(), ui_lang)
         st.session_state["analysis_result"] = result
 
 result = st.session_state.get("analysis_result")
 
+
 # --------------------------------------------------------------
-# STEP 3 — MATCH ANALYSIS (FIXED — Summary translates with flag changes)
+# STEP 3 — MATCH ANALYSIS (FULL FIXED BLOCK)
 # --------------------------------------------------------------
 
 if result:
@@ -246,36 +325,79 @@ if result:
 
     score = result["score"]
     missing = result["missing_skills"]
-    summary = result["summary"]   # This is in the language when analysis was run
-    
-    # Store the original summary language if not already stored
+    summary = result["summary"]
+
+    # Store the language that produced the summary
     if "original_summary_lang" not in st.session_state:
         st.session_state["original_summary_lang"] = ui_lang
-    
+
+    # Match score
     st.metric(ui_text("match_score", ui_lang), f"{score}%")
 
+    # ----------------------------------------------------------
+    # FIXED MISSING SKILLS (NO DOUBLE TRANSLATION)
+    # CV-language output only for the missing skills list
+    # ----------------------------------------------------------
     if missing:
-        st.warning(ui_text("missing_skills", ui_lang) + " " + ", ".join(missing))
+        # Normalize detect_cv_language() output
+        lang_lower = str(cv_lang).strip().lower()
+
+        if lang_lower in ["fi", "finnish"]:
+            cv_lang_detected = "Finnish"
+        elif lang_lower in ["en", "english"]:
+            cv_lang_detected = "English"
+        elif lang_lower in ["sv", "swedish"]:
+            cv_lang_detected = "Swedish"
+        elif lang_lower in ["es", "spanish"]:
+            cv_lang_detected = "Spanish"
+        elif lang_lower in ["pt", "pt-br", "portuguese", "português", "portugais"]:
+            cv_lang_detected = "Portuguese"
+        elif lang_lower in ["fr", "french", "français"]:
+            cv_lang_detected = "French"
+        elif lang_lower in ["de", "german", "deutsch"]:
+            cv_lang_detected = "German"
+        else:
+            cv_lang_detected = "English"
+
+        # Create the missing skills text ONLY (no explanatory prefix)
+        missing_sentence = ", ".join(missing)
+
+        # Translate ONLY the list — not any label
+        translated_missing = translate_text(
+            missing_sentence,
+            cv_lang_detected
+        )
+
+        # UI label stays in UI language
+        st.warning(ui_text("missing_skills", ui_lang) + " " + translated_missing)
+
     else:
         st.success("✔")
 
+    # ----------------------------------------------------------
+    # SUMMARY TRANSLATION (FIXED FOR PORTUGUESE + UI SWITCHING)
+    # ----------------------------------------------------------
     st.subheader(ui_text("summary", ui_lang))
-    
-    # ✅ FIXED: Translate summary if UI language changed
+
     TARGET_LANGUAGE = {
         "en": "English",
         "fi": "Finnish",
         "sv": "Swedish",
+        "es": "Spanish",
+        "pt-br": "Portuguese",
+        "fr": "French",
+        "de": "German"
     }[ui_lang]
-    
+
     original_lang = st.session_state.get("original_summary_lang", "en")
-    
-    # If UI language is different from when summary was created, translate it
-    if ui_lang != original_lang:
+
+    # Always re-translate when UI changes OR Portuguese is selected
+    must_translate = (ui_lang != original_lang) or (ui_lang == "pt-br")
+
+    if must_translate:
         translated_summary = translate_text(summary, TARGET_LANGUAGE)
         st.write(translated_summary)
     else:
-        # Same language, no translation needed
         st.write(summary)
 
 # --------------------------------------------------------------
@@ -300,6 +422,26 @@ if result:
             "📌 Punktlista (rekryterarvänlig)",
             "✏️ Stycken (lättlästa)",
             "🧩 Hybridmodell"
+        ],
+        "es": [
+            "📌 Viñetas (amigable para reclutadores)",
+            "✏️ Párrafos (fáciles de leer)",
+            "🧩 Formato híbrido"
+        ],
+        "pt-br": [
+            "📌 Tópicos (bom para recrutadores)",
+            "✏️ Parágrafos (fácil de ler)",
+            "🧩 Formato híbrido"
+        ],
+        "fr": [
+            "📌 Puces (lisible pour recruteurs)",
+            "✏️ Paragraphes (faciles à lire)",
+            "🧩 Format hybride"
+        ],
+        "de": [
+            "📌 Stichpunkte (recruiterfreundlich)",
+            "✏️ Absätze (leicht zu lesen)",
+            "🧩 Hybridformat"
         ]
     }[ui_lang]
 
@@ -311,19 +453,9 @@ if result:
     )
     st.markdown('</div>', unsafe_allow_html=True)
 
-    # NORMALIZATION
-    if (
-        "Luettelo" in selection or
-        "Luettelopiste" in selection or
-        "Bullet" in selection or
-        "Punkt" in selection
-    ):
+    if any(word in selection.lower() for word in ["bullet", "luettelo", "punkt", "viñ", "tóp", "puce", "stich"]):
         cleaned_format = "Bullet Points (recruiter-friendly)"
-    elif (
-        "Kappale" in selection or
-        "Paragraph" in selection or
-        "Stycke" in selection
-    ):
+    elif any(word in selection.lower() for word in ["paragraph", "kappale", "stycke", "pár", "pará", "paragraphe", "absatz"]):
         cleaned_format = "Paragraphs (easy to read)"
     else:
         cleaned_format = "Hybrid"
@@ -336,8 +468,10 @@ if result:
     if "rewritten" in st.session_state:
         st.text_area(ui_text("step4_rewrite", ui_lang) + ":", st.session_state["rewritten"], height=350)
 
+
+
 # --------------------------------------------------------------
-# STEP 5 — COVER LETTER (UNCHANGED - WORKS PERFECTLY)
+# STEP 5 — COVER LETTER
 # --------------------------------------------------------------
 
 if result:
@@ -350,6 +484,8 @@ if result:
 
     if "letter" in st.session_state:
         st.text_area(ui_text("step5_cover_letter", ui_lang) + ":", st.session_state["letter"], height=350)
+
+
 
 # --------------------------------------------------------------
 # STEP 6 — CV TRANSLATOR
@@ -372,7 +508,13 @@ if cv_text:
         st.session_state["translated_cv"] = tcv
 
     if "translated_cv" in st.session_state:
-        st.text_area("Translated CV:", st.session_state["translated_cv"], height=300)
+        st.text_area(
+            ui_text("step6_translate_cv", ui_lang) + ":",
+            st.session_state["translated_cv"],
+            height=300
+        )
+
+
 
 # --------------------------------------------------------------
 # STEP 7 — COVER LETTER TRANSLATOR
@@ -395,10 +537,16 @@ if "letter" in st.session_state:
         st.session_state["translated_letter"] = new_letter
 
     if "translated_letter" in st.session_state:
-        st.text_area("Translated Cover Letter:", st.session_state["translated_letter"], height=300)
+        st.text_area(
+            ui_text("step7_translate_cover", ui_lang) + ":",
+            st.session_state["translated_letter"],
+            height=300
+        )
+
+
 
 # --------------------------------------------------------------
-# STEP 8 — INTERVIEW PREP (UNCHANGED - WORKS PERFECTLY)
+# STEP 8 — INTERVIEW PREP
 # --------------------------------------------------------------
 
 if result:
@@ -432,6 +580,38 @@ if result:
                 "redflags": "Eventuella svagheter i detta CV",
                 "salary": "Löne- och förväntningsfrågor",
                 "tips": "Experttips",
+            },
+            "Spanish": {
+                "behavioral": "Preguntas Conductuales (STAR)",
+                "cultural": "Preguntas de Encaje Cultural",
+                "leadership": "Preguntas de Liderazgo y Responsabilidad",
+                "redflags": "Posibles puntos débiles del CV",
+                "salary": "Preguntas sobre salario y expectativas",
+                "tips": "Consejos finales del experto",
+            },
+            "Portuguese": {
+                "behavioral": "Perguntas Comportamentais (STAR)",
+                "cultural": "Perguntas de Adequação Cultural",
+                "leadership": "Perguntas de Liderança e Responsabilidade",
+                "redflags": "Possíveis pontos fracos do CV",
+                "salary": "Perguntas sobre salário e expectativas",
+                "tips": "Dicas finais do especialista",
+            },
+            "French": {
+                "behavioral": "Questions comportementales (STAR)",
+                "cultural": "Questions d'adéquation culturelle",
+                "leadership": "Questions de leadership et responsabilité",
+                "redflags": "Points faibles possibles du CV",
+                "salary": "Questions sur le salaire et les attentes",
+                "tips": "Conseils d'expert",
+            },
+            "German": {
+                "behavioral": "Verhaltensfragen (STAR)",
+                "cultural": "Fragen zur kulturellen Passung",
+                "leadership": "Führungs- und Verantwortungsfragen",
+                "redflags": "Mögliche Schwächen im Lebenslauf",
+                "salary": "Fragen zu Gehalt und Erwartungen",
+                "tips": "Expertentipps",
             },
         }[job_lang]
 
