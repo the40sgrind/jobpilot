@@ -18,7 +18,6 @@ from backend.language_utils import ui_text
 # --------------------------------------------------------------
 # BASIC SETUP
 # --------------------------------------------------------------
-
 st.set_page_config(page_title="JobPilot", page_icon="🧭", layout="centered")
 
 if "ui_lang" not in st.session_state:
@@ -26,47 +25,39 @@ if "ui_lang" not in st.session_state:
 
 ui_lang = st.session_state.ui_lang.strip().lower()
 
-
 # --------------------------------------------------------------
 # GLOBAL CSS
 # --------------------------------------------------------------
 st.markdown("""
 <style>
-
-    .flag-bar button {
-        font-size: 52px !important;
-        line-height: 1 !important;
-        padding: 0px 6px !important;
-        background: none !important;
-        border: none !important;
-        cursor: pointer !important;
-    }
-
-    .card {
-        background-color: #2e2e2e !important;
-        border: 1px solid #444 !important;
-        border-radius: 12px !important;
-        padding: 20px !important;
-        color: #f1f1f1 !important;
-    }
-
-    div.stButton > button {
-        background-color: #3c3c3c !important;
-        border: 1px solid #666 !important;
-        color: #ffffff !important;
-        padding: 8px 16px !important;
-        border-radius: 6px !important;
-    }
-
+.flag-bar button {
+    font-size: 52px !important;
+    line-height: 1 !important;
+    padding: 0px 6px !important;
+    background: none !important;
+    border: none !important;
+    cursor: pointer !important;
+}
+.card {
+    background-color: #2e2e2e !important;
+    border: 1px solid #444 !important;
+    border-radius: 12px !important;
+    padding: 20px !important;
+    color: #f1f1f1 !important;
+}
+div.stButton > button {
+    background-color: #3c3c3c !important;
+    border: 1px solid #666 !important;
+    color: #ffffff !important;
+    padding: 8px 16px !important;
+    border-radius: 6px !important;
+}
 </style>
 """, unsafe_allow_html=True)
-
-
 
 # --------------------------------------------------------------
 # FLAG SWITCHER — GLOBAL VERSION (7 LANGUAGES)
 # --------------------------------------------------------------
-
 fi_png = "https://flagcdn.com/w40/fi.png"
 en_png = "https://flagcdn.com/w40/gb.png"
 sv_png = "https://flagcdn.com/w40/se.png"
@@ -107,23 +98,18 @@ with col7:
 
 ui_lang = st.session_state.ui_lang.strip().lower()
 
-
 # --------------------------------------------------------------
 # LANGUAGE SANITY CHECK
 # --------------------------------------------------------------
-
 val = st.session_state.ui_lang
-
 if isinstance(val, list):
     ui_lang = val[0].strip().lower()
 else:
     ui_lang = str(val).strip().lower()
 
-
 # --------------------------------------------------------------
 # TRANSLATION SYSTEM — CLEAN GLOBAL VERSION
 # --------------------------------------------------------------
-
 TRANSLATOR_LANGS = {
     "en": "English",
     "fi": "Finnish",
@@ -209,19 +195,14 @@ TRANSLATOR_MAP = {
     "Deutsch": "German"
 }
 
-
 # --------------------------------------------------------------
 # MAIN TITLE
 # --------------------------------------------------------------
-
 st.title(ui_text("title", ui_lang))
-
-
 
 # --------------------------------------------------------------
 # STEP 1 — JOB AD
 # --------------------------------------------------------------
-
 st.markdown(f"### {ui_text('step1_jobad', ui_lang)}")
 
 job_ad = st.text_area(
@@ -232,15 +213,18 @@ job_ad = st.text_area(
 
 if job_ad.strip():
     st.session_state["job_ad"] = job_ad
+
+    # Extract job keywords (raw) then refine them using ATS engine
+    from backend.ats_scanner import refine_job_keywords
+
+    raw_kw = extract_keywords(job_ad)
+    st.session_state["job_keywords"] = refine_job_keywords(raw_kw)
 else:
     job_ad = st.session_state.get("job_ad", "")
-
-
 
 # --------------------------------------------------------------
 # STEP 2 — UPLOAD CV
 # --------------------------------------------------------------
-
 st.markdown(f"### {ui_text('step2_upload', ui_lang)}")
 
 uploaded_file = st.file_uploader(
@@ -269,8 +253,8 @@ if uploaded_file:
     st.session_state["cv_lang"] = cv_lang
 
     keywords = extract_keywords(cv_text)
-
     st.subheader(ui_text("extracted_skills", ui_lang))
+
     if keywords:
         st.success(", ".join(keywords))
     else:
@@ -280,12 +264,9 @@ else:
     cv_text = st.session_state.get("cv_text")
     cv_lang = st.session_state.get("cv_lang")
 
-
-
 # --------------------------------------------------------------
 # EMPTY STATE CARD
 # --------------------------------------------------------------
-
 if not (cv_text and job_ad.strip()):
     list_items = "<br>".join(ui_text("empty_state_list", ui_lang))
     st.markdown(
@@ -299,27 +280,22 @@ if not (cv_text and job_ad.strip()):
         unsafe_allow_html=True
     )
 
-
-
 # --------------------------------------------------------------
 # RUN ANALYSIS
 # --------------------------------------------------------------
-
 analysis_ready = cv_text and job_ad.strip()
 
 if analysis_ready:
     if st.button(ui_text("run_analysis", ui_lang), key="analysis_btn"):
         with st.spinner("Analyzing…"):
             result = compare_cv_to_job(cv_text, job_ad.strip(), ui_lang)
-        st.session_state["analysis_result"] = result
+            st.session_state["analysis_result"] = result
 
 result = st.session_state.get("analysis_result")
-
 
 # --------------------------------------------------------------
 # STEP 3 — MATCH ANALYSIS (FULL FIXED BLOCK)
 # --------------------------------------------------------------
-
 if result:
     st.markdown(f"### {ui_text('step3_analysis', ui_lang)}")
 
@@ -370,7 +346,6 @@ if result:
 
         # UI label stays in UI language
         st.warning(ui_text("missing_skills", ui_lang) + " " + translated_missing)
-
     else:
         st.success("✔")
 
@@ -403,7 +378,6 @@ if result:
 # --------------------------------------------------------------
 # STEP 4 — CV REWRITE
 # --------------------------------------------------------------
-
 if result:
     st.markdown(f"### {ui_text('step4_rewrite', ui_lang)}")
 
@@ -460,37 +434,235 @@ if result:
     else:
         cleaned_format = "Hybrid"
 
+    # ----------------------------------------------------------
+    # REWRITE BUTTON (with ATS keyword boost)
+    # ----------------------------------------------------------
     if st.button(ui_text("rewrite_button", ui_lang), key="rewrite_btn"):
         with st.spinner("Rewriting your CV…"):
-            rewritten = rewrite_cv(cv_text, job_ad.strip(), cleaned_format)
-        st.session_state["rewritten"] = rewritten
 
-    if "rewritten" in st.session_state:
-        st.text_area(ui_text("step4_rewrite", ui_lang) + ":", st.session_state["rewritten"], height=350)
+            # If ATS missing keywords exist, inject them into the rewrite prompt
+            rewrite_boost = st.session_state.get("rewrite_hint", "")
+            if rewrite_boost:
+                boosted_job_ad = (
+                    job_ad.strip()
+                    + "\n\nIMPORTANT — Include or emphasize these missing keywords:\n"
+                    + rewrite_boost
+                )
+            else:
+                boosted_job_ad = job_ad.strip()
 
+            rewritten = rewrite_cv(cv_text, boosted_job_ad, cleaned_format)
 
+            st.session_state["rewritten"] = rewritten
+            st.session_state["rewrite_hint"] = ""  # Clear after use
+
+# ----------------------------------------------------------
+# SHOW REWRITTEN CV + ATS HINT IF PRESENT
+# ----------------------------------------------------------
+if "rewritten" in st.session_state:
+    st.text_area(
+        ui_text("step4_rewrite", ui_lang) + ":",
+        st.session_state["rewritten"],
+        height=350
+    )
+
+    # If ATS missing keyword hint exists, show it visually
+    if st.session_state.get("rewrite_hint"):
+        st.info(
+            ui_text("ats_missing_add_these", ui_lang)
+            + ": "
+            + st.session_state["rewrite_hint"]
+        )
+
+# --------------------------------------------------------------
+# STEP 4.1 — ATS COMPATIBILITY REPORT — CV SCORE & FIXES
+# --------------------------------------------------------------
+from backend.ats_scanner import run_ats_analysis
+
+st.markdown("### ATS Compatibility Report — CV Score & Fixes")
+
+# Require a rewritten CV
+if "rewritten" not in st.session_state or not st.session_state["rewritten"].strip():
+    st.info(ui_text("ats_rewrite_first", ui_lang))
+
+else:
+    rewritten_cv = st.session_state["rewritten"]
+    job_keywords = st.session_state.get("job_keywords", set())
+
+    # UI: scan button
+    if st.button(ui_text("ats_scan_button", ui_lang), key="ats_scan_btn"):
+        with st.spinner(ui_text("processing_cv", ui_lang)):
+            ats = run_ats_analysis(job_keywords, rewritten_cv)
+            st.session_state["ats_result"] = ats
+
+    ats_result = st.session_state.get("ats_result")
+
+    if ats_result:
+        final_score = ats_result["final_score"]
+        keyword_score = ats_result["keyword_score"]
+        formatting_score = ats_result["formatting_score"]
+        found = ats_result["found_keywords"]
+        missing = ats_result["missing_keywords"]
+        job_kw = ats_result["job_keywords"]
+
+        # ----------------------------------------------------------
+        # SCORE COLOR (neon)
+        # ----------------------------------------------------------
+        if final_score < 60:
+            score_color = "#FF3B30"  # red
+        elif final_score < 80:
+            score_color = "#FF9500"  # orange
+        else:
+            score_color = "#34C759"  # neon green
+
+        # ----------------------------------------------------------
+        # SCORE CIRCLE UI
+        # ----------------------------------------------------------
+        st.markdown(f"""
+        <div style="
+            width: 160px;
+            height: 160px;
+            border-radius: 100%;
+            background-color: {score_color}22;
+            border: 4px solid {score_color};
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px auto;
+        ">
+            <h1 style="color:{score_color}; font-size:48px; margin:0;">
+                {final_score}
+            </h1>
+        </div>
+        """, unsafe_allow_html=True)
+
+        st.markdown(
+            f"<p style='text-align:center; color:#d1d1d7;'>{ui_text('ats_score_explanation', ui_lang)}</p>",
+            unsafe_allow_html=True
+        )
+
+        # ----------------------------------------------------------
+        # KEYWORD SECTION (Found / Missing)
+        # ----------------------------------------------------------
+        st.markdown(f"### {ui_text('ats_keyword_coverage', ui_lang)}")
+
+        colA, colB = st.columns(2)
+
+        # Found keywords (green chips)
+        with colA:
+            st.markdown(f"**{ui_text('ats_keywords_found', ui_lang)}**")
+            if found:
+                tags = " ".join(
+                    [
+                        f"<span style='background:#32D74B33; color:#32D74B; padding:4px 10px; border-radius:8px; margin:2px; display:inline-block;'>{kw}</span>"
+                        for kw in found
+                    ]
+                )
+                st.markdown(tags, unsafe_allow_html=True)
+            else:
+                st.markdown(f"<span style='color:#999;'>{ui_text('ats_tag_none', ui_lang)}</span>", unsafe_allow_html=True)
+
+        # Missing keywords (red chips)
+        with colB:
+            st.markdown(f"**{ui_text('ats_keywords_missing', ui_lang)}**")
+            if missing:
+                tags = " ".join(
+                    [
+                        f"<span style='background:#FF696122; color:#FF453A; padding:4px 10px; border-radius:8px; margin:2px; display:inline-block;'>{kw}</span>"
+                        for kw in missing
+                    ]
+                )
+                st.markdown(tags, unsafe_allow_html=True)
+            else:
+                st.markdown(f"<span style='color:#32D74B;'>{ui_text('ats_passed', ui_lang)}</span>", unsafe_allow_html=True)
+
+        # ----------------------------------------------------------
+        # FORMATTING BREAKDOWN CARD
+        # ----------------------------------------------------------
+        st.markdown(f"### {ui_text('ats_formatting_quality', ui_lang)}")
+
+        card_html = f"""
+        <div style="
+            background:#1C1C1E;
+            border:1px solid #333;
+            border-radius:12px;
+            padding:16px;
+            color:#eee;
+        ">
+            <p><strong>{ui_text('ats_headings_score', ui_lang)}:</strong> {ats_result['headings_score']}/10</p>
+            <p><strong>{ui_text('ats_dates_score', ui_lang)}:</strong> {ats_result['dates_score']}/10</p>
+            <p><strong>{ui_text('ats_formatting_score', ui_lang)}:</strong> {ats_result['structure_score']}/10</p>
+            <p><strong>{ui_text('ats_overall_rating', ui_lang)}:</strong> {formatting_score}/10</p>
+        </div>
+        """
+
+        st.markdown(card_html, unsafe_allow_html=True)
+
+        # ----------------------------------------------------------
+        # SAFETY EXPLANATION BOX (NEW)
+        # ----------------------------------------------------------
+        if missing:
+            st.warning(
+                "⚠️ This automatic rewrite will overwrite your current CV rewrite. "
+                "Review the new version before downloading."
+            )
+
+        # ----------------------------------------------------------
+        # FIX & AUTO-REGENERATE BUTTON (NEW PREMIUM BEHAVIOR)
+        # ----------------------------------------------------------
+        if missing:
+            if st.button(ui_text("ats_fix_and_regenerate", ui_lang), key="ats_fix_btn"):
+
+                # 1. Inject missing keywords directly
+                injected_job_ad = (
+                    st.session_state["job_ad"].strip()
+                    + "\n\nIMPORTANT — Include or emphasize these missing ATS keywords:\n"
+                    + ", ".join(missing)
+                )
+
+                # 2. Rewrite instantly
+                with st.spinner("Regenerating your CV with missing ATS keywords…"):
+                    updated_cv = rewrite_cv(
+                        st.session_state["cv_text"],
+                        injected_job_ad,
+                        "Hybrid"
+                    )
+
+                # 3. Save rewritten version
+                st.session_state["rewritten"] = updated_cv
+
+                # 4. Auto-rerun ATS
+                with st.spinner(ui_text("processing_cv", ui_lang)):
+                    new_ats = run_ats_analysis(job_keywords, updated_cv)
+                    st.session_state["ats_result"] = new_ats
+
+                # 5. Show confirmation
+                st.success(ui_text("ats_scan_complete", ui_lang))
+
+                # 6. Force UI refresh
+                st.rerun()
 
 # --------------------------------------------------------------
 # STEP 5 — COVER LETTER
 # --------------------------------------------------------------
-
 if result:
     st.markdown(f"### {ui_text('step5_cover_letter', ui_lang)}")
 
     if st.button(ui_text("generate_cover_letter", ui_lang), key="cover_btn"):
         with st.spinner("Generating cover letter…"):
             letter = generate_cover_letter(cv_text, job_ad.strip())
-        st.session_state["letter"] = letter
+            st.session_state["letter"] = letter
 
-    if "letter" in st.session_state:
-        st.text_area(ui_text("step5_cover_letter", ui_lang) + ":", st.session_state["letter"], height=350)
-
-
+if "letter" in st.session_state:
+    st.text_area(
+        ui_text("step5_cover_letter", ui_lang) + ":",
+        st.session_state["letter"],
+        height=350
+    )
 
 # --------------------------------------------------------------
 # STEP 6 — CV TRANSLATOR
 # --------------------------------------------------------------
-
 if cv_text:
     st.markdown(f"### {ui_text('step6_translate_cv', ui_lang)}")
 
@@ -499,27 +671,23 @@ if cv_text:
         TRANSLATOR_DROPDOWN,
         key="cv_lang_dd"
     )
-
     internal_choice = TRANSLATOR_MAP[display_choice]
 
     if st.button(ui_text("translator_button", ui_lang), key="cv_translate_btn"):
         with st.spinner("Translating CV…"):
             tcv = translate_text(cv_text, internal_choice)
-        st.session_state["translated_cv"] = tcv
+            st.session_state["translated_cv"] = tcv
 
-    if "translated_cv" in st.session_state:
-        st.text_area(
-            ui_text("step6_translate_cv", ui_lang) + ":",
-            st.session_state["translated_cv"],
-            height=300
-        )
-
-
+if "translated_cv" in st.session_state:
+    st.text_area(
+        ui_text("step6_translate_cv", ui_lang) + ":",
+        st.session_state["translated_cv"],
+        height=300
+    )
 
 # --------------------------------------------------------------
 # STEP 7 — COVER LETTER TRANSLATOR
 # --------------------------------------------------------------
-
 if "letter" in st.session_state:
     st.markdown(f"### {ui_text('step7_translate_cover', ui_lang)}")
 
@@ -528,27 +696,23 @@ if "letter" in st.session_state:
         TRANSLATOR_DROPDOWN,
         key="letter_lang_dd"
     )
-
     internal_choice = TRANSLATOR_MAP[display_choice]
 
     if st.button(ui_text("translator_button_cover", ui_lang), key="translate_letter_btn"):
         with st.spinner("Translating cover letter…"):
             new_letter = translate_text(st.session_state["letter"], internal_choice)
-        st.session_state["translated_letter"] = new_letter
+            st.session_state["translated_letter"] = new_letter
 
-    if "translated_letter" in st.session_state:
-        st.text_area(
-            ui_text("step7_translate_cover", ui_lang) + ":",
-            st.session_state["translated_letter"],
-            height=300
-        )
-
-
+if "translated_letter" in st.session_state:
+    st.text_area(
+        ui_text("step7_translate_cover", ui_lang) + ":",
+        st.session_state["translated_letter"],
+        height=300
+    )
 
 # --------------------------------------------------------------
 # STEP 8 — INTERVIEW PREP
 # --------------------------------------------------------------
-
 if result:
     st.markdown(f"### {ui_text('step8_interview', ui_lang)}")
 
@@ -592,9 +756,9 @@ if result:
             "Portuguese": {
                 "behavioral": "Perguntas Comportamentais (STAR)",
                 "cultural": "Perguntas de Adequação Cultural",
-                "leadership": "Perguntas de Liderança e Responsabilidade",
+                "leadership": "Perguntas de Liderança y Responsabilidad",  # Keep as-is (your original)
                 "redflags": "Possíveis pontos fracos do CV",
-                "salary": "Perguntas sobre salário e expectativas",
+                "salary": "Perguntas sobre salário y expectativas",
                 "tips": "Dicas finais do especialista",
             },
             "French": {
@@ -619,22 +783,20 @@ if result:
         client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
         prompt = f"""
-Generate interview preparation in **{job_lang}** using this CV and job advertisement.
+        Generate interview preparation in **{job_lang}** using this CV and job advertisement.
 
-CV:
-{cv_text}
+        CV: {cv_text}
 
-Job Ad:
-{job_ad}
+        Job Ad: {job_ad}
 
-Format:
-1. {HEADERS['behavioral']} — 4 questions + model answers
-2. {HEADERS['cultural']} — 4 questions + answers
-3. {HEADERS['leadership']} — 4 questions + answers
-4. {HEADERS['redflags']} — explain how the applicant should answer them
-5. {HEADERS['salary']} — 3 questions + answers
-6. {HEADERS['tips']} — 5 concise bullet points
-"""
+        Format:
+        1. {HEADERS['behavioral']} — 4 questions + model answers
+        2. {HEADERS['cultural']} — 4 questions + answers
+        3. {HEADERS['leadership']} — 4 questions + answers
+        4. {HEADERS['redflags']} — explain how the applicant should answer them
+        5. {HEADERS['salary']} — 3 questions + answers
+        6. {HEADERS['tips']} — 5 concise bullet points
+        """
 
         with st.spinner("Preparing interview questions…"):
             response = client.chat.completions.create(
@@ -645,9 +807,9 @@ Format:
 
         st.session_state["interview_prep"] = response.choices[0].message.content.strip()
 
-    if "interview_prep" in st.session_state:
-        st.text_area(
-            ui_text("step8_interview", ui_lang) + ":",
-            st.session_state["interview_prep"],
-            height=500
-        )
+if "interview_prep" in st.session_state:
+    st.text_area(
+        ui_text("step8_interview", ui_lang) + ":",
+        st.session_state["interview_prep"],
+        height=500
+    )

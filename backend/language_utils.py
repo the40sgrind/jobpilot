@@ -1,8 +1,7 @@
 # backend/language_utils.py
-# Centralized translations for ALL UI-visible text
-# Supports EN / FI / SV / ES / PT-BR / FR / DE
 
 UI_TEXT = {
+
     # ----------------------------------------------------------
     # MAIN TITLE
     # ----------------------------------------------------------
@@ -55,6 +54,18 @@ UI_TEXT = {
         "fr": "4️⃣ Réécrivez votre CV",
         "de": "4️⃣ Schreiben Sie Ihren Lebenslauf neu"
     },
+
+    # ⭐ NEW PREMIUM ATS STEP 4.1 (header stays English in all languages)
+    "step4_1_ats_header": {
+        "en": "ATS Compatibility Report — CV Score & Fixes",
+        "fi": "ATS Compatibility Report — CV Score & Fixes",
+        "sv": "ATS Compatibility Report — CV Score & Fixes",
+        "es": "ATS Compatibility Report — CV Score & Fixes",
+        "pt-br": "ATS Compatibility Report — CV Score & Fixes",
+        "fr": "ATS Compatibility Report — CV Score & Fixes",
+        "de": "ATS Compatibility Report — CV Score & Fixes"
+    },
+
     "step5_cover_letter": {
         "en": "5️⃣ Cover Letter",
         "fi": "5️⃣ Hakemuskirje",
@@ -136,9 +147,6 @@ UI_TEXT = {
         "de": "Keine Schlüsselwörter gefunden."
     },
 
-    # ----------------------------------------------------------
-    # JOB AD
-    # ----------------------------------------------------------
     "job_ad_input": {
         "en": "Job Advertisement",
         "fi": "Työpaikkailmoitus",
@@ -150,7 +158,7 @@ UI_TEXT = {
     },
 
     # ----------------------------------------------------------
-    # EMPTY STATE CARD
+    # EMPTY STATE CARD (UNDER STEP 2)
     # ----------------------------------------------------------
     "empty_state_header": {
         "en": "💡 Unlock Full Features",
@@ -229,9 +237,6 @@ UI_TEXT = {
         ]
     },
 
-    # ----------------------------------------------------------
-    # MATCH ANALYSIS
-    # ----------------------------------------------------------
     "match_score": {
         "en": "Match Score",
         "fi": "Vastaavuusprosentti",
@@ -310,7 +315,7 @@ UI_TEXT = {
     },
 
     # ----------------------------------------------------------
-    # BUTTONS
+    # BUTTONS (NON-ATS)
     # ----------------------------------------------------------
     "rewrite_button": {
         "en": "Rewrite My CV ✨",
@@ -374,14 +379,402 @@ UI_TEXT = {
         "fr": "Générer préparation à l’entretien 🎤",
         "de": "Interviewvorbereitung erstellen 🎤"
     },
+
+    # ==========================================================
+    # ATS KEYWORD SECTIONS — PREMIUM STEP 4.1
+    # ==========================================================
+
+    "ats_keywords_from_job": {
+        "en": "Keywords from the Job Ad",
+        "fi": "Työpaikkailmoituksen avainsanat",
+        "sv": "Nyckelord från jobbannonsen",
+        "es": "Palabras clave de la oferta laboral",
+        "pt-br": "Palavras-chave da vaga",
+        "fr": "Mots-clés de l’offre d’emploi",
+        "de": "Schlüsselwörter aus der Stellenausschreibung"
+    },
+    "ats_keywords_found": {
+        "en": "Found in Your CV",
+        "fi": "Löytyi CV:stäsi",
+        "sv": "Hittades i ditt CV",
+        "es": "Encontrado en tu CV",
+        "pt-br": "Encontrado no seu CV",
+        "fr": "Présents dans votre CV",
+        "de": "In Ihrem Lebenslauf gefunden"
+    },
+    "ats_keywords_missing": {
+        "en": "Missing Keywords",
+        "fi": "Puuttuvat avainsanat",
+        "sv": "Saknade nyckelord",
+        "es": "Palabras clave faltantes",
+        "pt-br": "Palavras-chave faltando",
+        "fr": "Mots-clés manquants",
+        "de": "Fehlende Schlüsselwörter"
+    },
+    "ats_missing_add_these": {
+        "en": "Add these to improve your ATS score",
+        "fi": "Lisää nämä parantaaksesi ATS-pisteitäsi",
+        "sv": "Lägg till dessa för att förbättra din ATS-poäng",
+        "es": "Añade estos para mejorar tu puntuación ATS",
+        "pt-br": "Adicione estes para melhorar sua pontuação ATS",
+        "fr": "Ajoutez-les pour améliorer votre score ATS",
+        "de": "Fügen Sie diese hinzu, um Ihre ATS-Bewertung zu verbessern"
+    },
+    "ats_no_keywords_job_ad": {
+        "en": "No keywords detected in the job advertisement.",
+        "fi": "Työpaikkailmoituksesta ei löytynyt avainsanoja.",
+        "sv": "Inga nyckelord hittades i jobbannonsen.",
+        "es": "No se detectaron palabras clave en la oferta laboral.",
+        "pt-br": "Nenhuma palavra-chave encontrada na vaga.",
+        "fr": "Aucun mot-clé trouvé dans l’offre d’emploi.",
+        "de": "Keine Schlüsselwörter in der Stellenausschreibung gefunden."
+    },
+    "ats_job_keywords_title": {
+        "en": "Job Ad Keywords",
+        "fi": "Työpaikan avainsanat",
+        "sv": "Jobbannonsens nyckelord",
+        "es": "Palabras clave de la oferta",
+        "pt-br": "Palavras-chave da vaga",
+        "fr": "Mots-clés de l’offre",
+        "de": "Schlüsselwörter der Ausschreibung"
+    },
+    "ats_cv_keywords_title": {
+        "en": "Keywords Detected in Your CV",
+        "fi": "CV:stä havaitut avainsanat",
+        "sv": "Nyckelord upptäckta i ditt CV",
+        "es": "Palabras clave detectadas en tu CV",
+        "pt-br": "Palavras-chave detectadas no seu CV",
+        "fr": "Mots-clés détectés dans votre CV",
+        "de": "Im Lebenslauf erkannte Schlüsselwörter"
+    },
+    "ats_found_keywords_title": {
+        "en": "Matched Keywords",
+        "fi": "Vastaavat avainsanat",
+        "sv": "Matchade nyckelord",
+        "es": "Palabras clave coincidentes",
+        "pt-br": "Palavras-chave correspondentes",
+        "fr": "Mots-clés correspondants",
+        "de": "Übereinstimmende Schlüsselwörter"
+    },
+    "ats_missing_keywords_title": {
+        "en": "Missing Keywords",
+        "fi": "Puuttuvat avainsanat",
+        "sv": "Saknade nyckelord",
+        "es": "Palabras clave faltantes",
+        "pt-br": "Palavras-chave faltantes",
+        "fr": "Mots-clés manquants",
+        "de": "Fehlende Schlüsselwörter"
+    },
+    "ats_no_rewritten_cv": {
+        "en": "Rewrite your CV first to run the ATS compatibility report.",
+        "fi": "Kirjoita CV uudelleen ennen ATS-tarkistusta.",
+        "sv": "Skriv om ditt CV innan du kör ATS-rapporten.",
+        "es": "Reescribe tu CV antes de ejecutar el informe ATS.",
+        "pt-br": "Reescreva seu CV antes de executar o relatório ATS.",
+        "fr": "Réécrivez votre CV avant d’exécuter le rapport ATS.",
+        "de": "Schreiben Sie Ihren Lebenslauf neu, bevor Sie den ATS-Bericht ausführen."
+    },
+    "ats_no_cv_yet": {
+        "en": "No CV detected.",
+        "fi": "CV:tä ei löydetty.",
+        "sv": "Inget CV hittades.",
+        "es": "No se detectó ningún CV.",
+        "pt-br": "Nenhum CV encontrado.",
+        "fr": "Aucun CV détecté.",
+        "de": "Kein Lebenslauf gefunden."
+    },
+    "ats_rewrite_first": {
+        "en": "Rewrite your CV in Step 4 to enable ATS scanning.",
+        "fi": "Kirjoita CV uudelleen vaiheessa 4 ottaaksesi ATS-tarkistuksen käyttöön.",
+        "sv": "Skriv om ditt CV i steg 4 för att möjliggöra ATS-skanning.",
+        "es": "Reescribe tu CV en el paso 4 para activar el análisis ATS.",
+        "pt-br": "Reescreva seu CV na etapa 4 para ativar o escaneamento ATS.",
+        "fr": "Réécrivez votre CV à l’étape 4 pour activer l’analyse ATS.",
+        "de": "Schreiben Sie Ihren Lebenslauf in Schritt 4 neu, um die ATS-Prüfung zu aktivieren."
+    },
+
+    "ats_keyword_score": {
+        "en": "Keyword Coverage Score",
+        "fi": "Avainsanojen kattavuus",
+        "sv": "Täckning av nyckelord",
+        "es": "Cobertura de palabras clave",
+        "pt-br": "Cobertura de palavras-chave",
+        "fr": "Couverture des mots-clés",
+        "de": "Schlüsselwortabdeckung"
+    },
+    "ats_headings_score": {
+        "en": "Section Headings Score",
+        "fi": "Otsikoiden pisteet",
+        "sv": "Rubrikpoäng",
+        "es": "Puntuación de encabezados",
+        "pt-br": "Pontuação de seções",
+        "fr": "Score des sections",
+        "de": "Abschnittsbewertung"
+    },
+    "ats_dates_score": {
+        "en": "Date Formatting Score",
+        "fi": "Päivämäärien muotoilun pisteet",
+        "sv": "Datumformatets poäng",
+        "es": "Puntuación del formato de fechas",
+        "pt-br": "Pontuação de datas",
+        "fr": "Score du format des dates",
+        "de": "Bewertung des Datumsformats"
+    },
+    "ats_formatting_score": {
+        "en": "Formatting Quality Score",
+        "fi": "Muotoilun laatupisteet",
+        "sv": "Formateringspoäng",
+        "es": "Puntuación de formato",
+        "pt-br": "Pontuação de formatação",
+        "fr": "Score de mise en forme",
+        "de": "Formatierungsbewertung"
+    },
+    "ats_total_score": {
+        "en": "Total ATS Score",
+        "fi": "Kokonais-ATS-pisteet",
+        "sv": "Total ATS-poäng",
+        "es": "Puntuación ATS total",
+        "pt-br": "Pontuação ATS total",
+        "fr": "Score ATS total",
+        "de": "Gesamt-ATS-Bewertung"
+    },
+    "ats_score_label": {
+        "en": "ATS Score",
+        "fi": "ATS-pisteet",
+        "sv": "ATS-poäng",
+        "es": "Puntuación ATS",
+        "pt-br": "Pontuação ATS",
+        "fr": "Score ATS",
+        "de": "ATS-Bewertung"
+    },
+
+    "ats_formatting_issues": {
+        "en": "Formatting Issues",
+        "fi": "Muotoiluongelmat",
+        "sv": "Formateringsproblem",
+        "es": "Problemas de formato",
+        "pt-br": "Problemas de formatação",
+        "fr": "Problèmes de mise en forme",
+        "de": "Formatierungsprobleme"
+    },
+    "ats_formatting_heading_issues": {
+        "en": "Missing or unclear section headings",
+        "fi": "Puuttuvat tai epäselvät otsikot",
+        "sv": "Saknade eller oklara rubriker",
+        "es": "Encabezados faltantes o poco claros",
+        "pt-br": "Cabeçalhos ausentes ou pouco claros",
+        "fr": "Rubriques manquantes ou peu claires",
+        "de": "Fehlende oder unklare Überschriften"
+    },
+    "ats_formatting_date_issues": {
+        "en": "Incorrect or inconsistent date formats",
+        "fi": "Virheelliset tai epäjohdonmukaiset päivämäärämuodot",
+        "sv": "Felaktiga eller inkonsekventa datumformat",
+        "es": "Fechas incorrectas o inconsistentes",
+        "pt-br": "Datas incorretas ou inconsistentes",
+        "fr": "Formats de dates incorrects ou incohérents",
+        "de": "Fehlerhafte oder uneinheitliche Datumsformate"
+    },
+    "ats_formatting_structure_issues": {
+        "en": "Layout elements not ATS-friendly (tables, columns, images, text boxes)",
+        "fi": "Asettelu ei ole ATS-yhteensopiva (taulukot, sarakkeet, kuvat, tekstilaatikot)",
+        "sv": "Layout ej ATS-vänlig (tabeller, kolumner, bilder, textrutor)",
+        "es": "Estructura no compatible con ATS (tablas, columnas, imágenes, cuadros de texto)",
+        "pt-br": "Layout incompatível com ATS (tabelas, colunas, imagens, caixas de texto)",
+        "fr": "Mise en page non compatible ATS (tableaux, colonnes, images, zones de texte)",
+        "de": "Layout nicht ATS-konform (Tabellen, Spalten, Bilder, Textfelder)"
+    },
+
+    "ats_score_explanation": {
+        "en": "Your ATS score is based on keyword relevance (70%) and formatting quality (30%).",
+        "fi": "ATS-pisteet perustuvat avainsanoihin (70 %) ja muotoilun laatuun (30 %).",
+        "sv": "Din ATS-poäng baseras på nyckelordsrelevans (70 %) och formateringskvalitet (30 %).",
+        "es": "Tu puntuación ATS se basa en relevancia de palabras clave (70 %) y calidad de formato (30 %).",
+        "pt-br": "Sua pontuação ATS é baseada em relevância das palavras-chave (70 %) e qualidade de formatação (30 %).",
+        "fr": "Votre score ATS est basé sur la pertinence des mots-clés (70 %) et la qualité de mise en forme (30 %).",
+        "de": "Ihre ATS-Bewertung basiert auf Schlüsselwortrelevanz (70 %) und Formatierungsqualität (30 %)."
+    },
+
+    "ats_keyword_coverage": {
+        "en": "Keyword Coverage",
+        "fi": "Avainsanojen kattavuus",
+        "sv": "Täckning av nyckelord",
+        "es": "Cobertura de palabras clave",
+        "pt-br": "Cobertura de palavras-chave",
+        "fr": "Couverture des mots-clés",
+        "de": "Schlüsselwortabdeckung"
+    },
+    "ats_formatting_quality": {
+        "en": "Formatting Quality",
+        "fi": "Muotoilun laatu",
+        "sv": "Formateringskvalitet",
+        "es": "Calidad del formato",
+        "pt-br": "Qualidade da formatação",
+        "fr": "Qualité de mise en forme",
+        "de": "Formatierungsqualität"
+    },
+    "ats_overall_rating": {
+        "en": "Overall Rating",
+        "fi": "Kokonaisarvio",
+        "sv": "Totalbetyg",
+        "es": "Valoración general",
+        "pt-br": "Avaliação geral",
+        "fr": "Évaluation globale",
+        "de": "Gesamtbewertung"
+    },
+
+    "ats_scan_button": {
+        "en": "Run ATS Scan 🔍",
+        "fi": "Aja ATS-tarkistus 🔍",
+        "sv": "Kör ATS-skanning 🔍",
+        "es": "Ejecutar análisis ATS 🔍",
+        "pt-br": "Executar análise ATS 🔍",
+        "fr": "Lancer l’analyse ATS 🔍",
+        "de": "ATS-Scan starten 🔍"
+    },
+    "ats_fix_and_regenerate": {
+        "en": "Fix My CV & Regenerate ✨",
+        "fi": "Korjaa CV ja luo uudelleen ✨",
+        "sv": "Åtgärda CV och återskapa ✨",
+        "es": "Corregir CV y regenerar ✨",
+        "pt-br": "Corrigir CV e regenerar ✨",
+        "fr": "Corriger le CV et régénérer ✨",
+        "de": "Lebenslauf korrigieren & neu erstellen ✨"
+    },
+
+    "ats_scan_complete": {
+        "en": "ATS scan complete.",
+        "fi": "ATS-tarkistus valmis.",
+        "sv": "ATS-skanningen klar.",
+        "es": "Análisis ATS completado.",
+        "pt-br": "Análise ATS concluída.",
+        "fr": "Analyse ATS terminée.",
+        "de": "ATS-Scan abgeschlossen."
+    },
+    "ats_passed": {
+        "en": "Your CV is ATS-ready. Great work!",
+        "fi": "CV:si on ATS-yhteensopiva. Hienoa työtä!",
+        "sv": "Ditt CV är ATS-redo. Bra jobbat!",
+        "es": "Tu CV está listo para ATS. ¡Excelente trabajo!",
+        "pt-br": "Seu CV está pronto para ATS. Ótimo trabalho!",
+        "fr": "Votre CV est compatible ATS. Excellent travail !",
+        "de": "Ihr CV ist ATS-kompatibel. Gute Arbeit!"
+    },
+    "ats_risky": {
+        "en": "Your CV may struggle with ATS filters.",
+        "fi": "CV:si voi kohdata haasteita ATS-järjestelmissä.",
+        "sv": "Ditt CV kan få problem med ATS-filter.",
+        "es": "Tu CV podría tener dificultades con filtros ATS.",
+        "pt-br": "Seu CV pode ter dificuldades nos filtros ATS.",
+        "fr": "Votre CV pourrait rencontrer des difficultés avec les filtres ATS.",
+        "de": "Ihr CV könnte Probleme mit ATS-Filtern haben."
+    },
+    "ats_failed": {
+        "en": "Your CV is not ATS-friendly. Fixes strongly recommended.",
+        "fi": "CV:si ei ole ATS-yhteensopiva. Korjaukset ovat erittäin suositeltavia.",
+        "sv": "Ditt CV är inte ATS-vänligt. Åtgärder rekommenderas starkt.",
+        "es": "Tu CV no es compatible con ATS. Se recomiendan mejoras urgentes.",
+        "pt-br": "Seu CV não é compatível com ATS. Correções são fortemente recomendadas.",
+        "fr": "Votre CV n’est pas compatible ATS. Des corrections sont fortement recommandées.",
+        "de": "Ihr CV ist nicht ATS-freundlich. Verbesserungen werden dringend empfohlen."
+    },
+
+    "ats_tag_found": {
+        "en": "Found",
+        "fi": "Löytyi",
+        "sv": "Hittad",
+        "es": "Encontrado",
+        "pt-br": "Encontrado",
+        "fr": "Trouvé",
+        "de": "Gefunden"
+    },
+    "ats_tag_missing": {
+        "en": "Missing",
+        "fi": "Puuttuu",
+        "sv": "Saknas",
+        "es": "Faltante",
+        "pt-br": "Faltando",
+        "fr": "Manquant",
+        "de": "Fehlt"
+    },
+    "ats_tag_job_ad": {
+        "en": "Job Ad",
+        "fi": "Työpaikkailmoitus",
+        "sv": "Jobbannons",
+        "es": "Oferta laboral",
+        "pt-br": "Vaga",
+        "fr": "Offre d’emploi",
+        "de": "Stellenanzeige"
+    },
+    "ats_tag_cv_contains": {
+        "en": "Your CV Contains",
+        "fi": "CV:ssäsi esiintyy",
+        "sv": "Ditt CV innehåller",
+        "es": "Tu CV contiene",
+        "pt-br": "Seu CV contém",
+        "fr": "Présent dans votre CV",
+        "de": "Ihr CV enthält"
+    },
+    "ats_tag_add_these": {
+        "en": "Add These",
+        "fi": "Lisää nämä",
+        "sv": "Lägg till dessa",
+        "es": "Añade estos",
+        "pt-br": "Adicione estes",
+        "fr": "Ajoutez-les",
+        "de": "Diese hinzufügen"
+    },
+    "ats_tag_none": {
+        "en": "No keywords found yet.",
+        "fi": "Avainsanoja ei löytynyt vielä.",
+        "sv": "Inga nyckelord hittades ännu.",
+        "es": "Todavía no se encontraron palabras clave.",
+        "pt-br": "Nenhuma palavra-chave encontrada ainda.",
+        "fr": "Aucun mot-clé trouvé pour le moment.",
+        "de": "Noch keine Schlüsselwörter gefunden."
+    },
+
+    "ats_congrats": {
+        "en": "Excellent! Your CV meets modern ATS standards.",
+        "fi": "Erinomaista! CV:si täyttää nykyaikaiset ATS-vaatimukset.",
+        "sv": "Utmärkt! Ditt CV uppfyller moderna ATS-standarder.",
+        "es": "¡Excelente! Tu CV cumple con los estándares ATS modernos.",
+        "pt-br": "Excelente! Seu CV atende aos padrões ATS modernos.",
+        "fr": "Excellent ! Votre CV respecte les standards ATS modernes.",
+        "de": "Ausgezeichnet! Ihr CV erfüllt moderne ATS-Standards."
+    },
+    "ats_warning": {
+        "en": "Your CV needs improvements to pass recruiter filters reliably.",
+        "fi": "CV:si tarvitsee parannuksia läpäistäkseen rekrytointisuodattimet luotettavasti.",
+        "sv": "Ditt CV behöver förbättras för att pålitligt klara rekryteringsfilter.",
+        "es": "Tu CV necesita mejoras para superar filtros de reclutamiento de forma confiable.",
+        "pt-br": "Seu CV precisa de melhorias para passar de forma consistente pelos filtros de recrutadores.",
+        "fr": "Votre CV doit être amélioré pour franchir les filtres de recrutement de manière fiable.",
+        "de": "Ihr CV muss verbessert werden, um zuverlässig durch Recruiter-Filter zu kommen."
+    },
+    "ats_danger": {
+        "en": "Your CV may be rejected automatically by ATS systems.",
+        "fi": "CV:si voidaan hylätä automaattisesti ATS-järjestelmissä.",
+        "sv": "Ditt CV kan avvisas automatiskt av ATS-system.",
+        "es": "Tu CV puede ser rechazado automáticamente por sistemas ATS.",
+        "pt-br": "Seu CV pode ser rejeitado automaticamente por sistemas ATS.",
+        "fr": "Votre CV peut être rejeté automatiquement par les systèmes ATS.",
+        "de": "Ihr CV könnte automatisch von ATS-Systemen abgelehnt werden."
+    },
+    "ats_tips": {
+        "en": "Tips to improve your ATS score:",
+        "fi": "Vinkkejä ATS-pisteiden parantamiseen:",
+        "sv": "Tips för att förbättra din ATS-poäng:",
+        "es": "Consejos para mejorar tu puntuación ATS:",
+        "pt-br": "Dicas para melhorar sua pontuação ATS:",
+        "fr": "Conseils pour améliorer votre score ATS :",
+        "de": "Tipps zur Verbesserung Ihrer ATS-Bewertung:"
+    }
+
 }
 
 
 def ui_text(key: str, lang: str) -> str:
-    """
-    Returns UI text in the correct language.
-    Falls back to English gracefully.
-    """
     try:
         return UI_TEXT.get(key, {}).get(lang) or UI_TEXT.get(key, {}).get("en", "")
     except:
