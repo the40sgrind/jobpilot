@@ -1,5 +1,11 @@
 # JobPilot – LLM Brief (Dec 2025)
 
+# Internal LLM Design Brief (Portfolio Documentation)
+
+This document explains how LLMs are instructed and constrained inside JobPilot.
+It is included for transparency and portfolio review purposes.
+It is not required to run the application.
+
 ## Tech stack
 - Frontend: Streamlit app (`app/app.py`)
 - Backend modules (in `backend/`):

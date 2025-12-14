@@ -1,14 +1,12 @@
 🧭 JobPilot — AI-Powered Job Application Assistant
 
-Fast • Global • Accurate
+Fast • Global • Practical
 
-JobPilot helps job seekers instantly transform their CVs, match them to job ads with AI, generate tailored cover letters, translate everything into 7 languages, and prepare for interviews — all inside one streamlined tool.
+JobPilot is an AI-powered job application assistant that helps job seekers analyze job ads, optimize CVs, generate cover letters, translate documents into multiple languages, and prepare for interviews — all in one streamlined workflow.
 
-====================================================
+🌍 Global Language Support
 
-🌍 Global Language Support (v2.0)
-
-JobPilot now supports a fully international UI and translation pipeline:
+JobPilot supports a fully localized UI and multilingual processing pipeline in:
 
 English
 
@@ -24,37 +22,37 @@ French
 
 German
 
-Every UI component, prompt, and model interaction is localized.
+All UI elements, buttons, warnings, summaries, and outputs are language-aware.
 
-====================================================
-
-✨ Core Features (MVP Completed)
-
+✨ Core Features
 AI Job Match Analysis
-Paste a job ad + upload your CV → JobPilot generates:
 
-Match Score (%)
+Match score (%)
 
-Missing Skills (in CV language)
+Missing skills detection (shown in the CV’s original language)
 
-AI Summary (in UI language)
+AI-generated summary (shown in UI language)
 
 CV Rewrite Engine
-Rewrite your CV into:
 
-Bullet Format
+Rewrite CVs into:
 
-Paragraph Format
+Bullet format
 
-Hybrid Format
+Paragraph format
+
+Hybrid format
 
 Cover Letter Generator
-One click → fully personalized cover letter tailored to the job.
 
-CV & Cover Letter Translator
-Translate into all 7 supported languages.
+One-click, job-specific cover letters
 
-Multilingual AI Interview Preparation
+CV & Cover Letter Translation
+
+Translate documents into any supported language
+
+AI Interview Preparation
+
 Generates:
 
 Behavioral questions (STAR)
@@ -63,49 +61,36 @@ Cultural fit questions
 
 Leadership questions
 
-Salary & expectations
+Salary & expectation questions
 
 CV red flags
 
 Expert tips
 
-====================================================
+ATS & Quality Tools
 
-🔥 Global Features Added in v2.0
+ATS compatibility scanner
 
-Full UI localization (7 languages)
+Bias & authenticity auditor
 
-Accurate multilingual summary translations (including PT-BR)
-
-Missing Skills always shown in the CV’s original language
-
-Improved language detection
-
-Clean dropdown and translation mapping
-
-Centralized text management system
-
-====================================================
+TXT and PDF exports
 
 🗂 Project Structure
-
 JobPilot/
-app/
-app.py
-backend/
-ai_tools.py
-cv_parser.py
-comparator.py
-cv_rewriter.py
-cover_letter.py
-translator.py
-language_utils.py
-assets/
-README.md
-LICENSE
-requirements.txt
-
-====================================================
+├── app/
+│   └── app.py
+├── backend/
+│   ├── ai_tools.py
+│   ├── cv_parser.py
+│   ├── comparator.py
+│   ├── cv_rewriter.py
+│   ├── cover_letter.py
+│   ├── translator.py
+│   └── language_utils.py
+├── assets/
+├── README.md
+├── LICENSE
+└── requirements.txt
 
 🛠 Tech Stack
 
@@ -117,47 +102,21 @@ OpenAI API
 
 PyPDF2
 
-Custom AI rewrite & interview pipelines
-
-====================================================
-
-🚧 Upcoming Features (v3.x Roadmap)
-
-ATS Scanner
-
-Human Template Library
-
-Bias & Authenticity Auditor
-
-Monetization layer (free-tier limits + Stripe Checkout)
-
-====================================================
+Custom AI pipelines for rewriting, matching, and interviews
 
 🧪 Running Locally
-
 cd JobPilot
 streamlit run app/app.py
+
 
 Set your API key:
 
 export OPENAI_API_KEY="your_key_here"
 
-====================================================
-
 📝 License
 
 MIT License.
 
-====================================================
-
-🚀 Contributing
-
-Pull requests and feature suggestions are welcome.
-
-====================================================
-
 ⭐ Support
 
-If you like the project, give it a star!
-
-====================================================
+If you find this project useful, consider giving the repository a star.
