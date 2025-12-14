@@ -16,31 +16,62 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 # ------------------------------------------------------------
 def simple_lang_detect(text: str) -> str:
     """
-    Very small internal fallback to detect main CV language
-    without depending on language_utils.
+    Enhanced language detection using word frequency scoring.
     Returns one of:
     English / Finnish / Swedish / Spanish / Portuguese / French / German
     """
-    text_l = (text or "").lower()
-
-    if any(word in text_l for word in ["the", "and", "experience", "skills"]):
+    if not text:
         return "English"
-    if any(word in text_l for word in ["työkokemus", "osaaminen", "suomi"]):
-        return "Finnish"
-    if any(word in text_l for word in ["erfarenhet", "kunskaper"]):
-        return "Swedish"
-    if any(word in text_l for word in ["experiencia", "habilidades"]):
-        return "Spanish"
-    if any(word in text_l for word in ["experiência", "habilidades"]):
-        return "Portuguese"
-    if any(word in text_l for word in ["expérience", "compétences"]):
-        return "French"
-    if any(word in text_l for word in ["erfahrung", "fähigkeiten"]):
-        return "German"
-
-    return "English"  # fallback
-
-
+    
+    text_l = text.lower()
+    
+    # Score-based detection (count matches for each language)
+    scores = {
+        "English": 0,
+        "Finnish": 0,
+        "Swedish": 0,
+        "Spanish": 0,
+        "Portuguese": 0,
+        "French": 0,
+        "German": 0
+    }
+    
+    # English markers (more specific)
+    en_words = ["experience", "skills", "education", "worked", "managed", "developed", "responsibilities", "achievements"]
+    scores["English"] = sum(1 for word in en_words if word in text_l)
+    
+    # Finnish markers
+    fi_words = ["työkokemus", "osaaminen", "koulutus", "vastuualueet", "saavutukset", "työssä", "projektit", "ja", "että", "olen"]
+    scores["Finnish"] = sum(1 for word in fi_words if word in text_l)
+    
+    # Swedish markers
+    sv_words = ["erfarenhet", "kunskaper", "utbildning", "ansvar", "arbete", "projekt", "och", "som", "att", "har"]
+    scores["Swedish"] = sum(1 for word in sv_words if word in text_l)
+    
+    # Spanish markers
+    es_words = ["experiencia", "habilidades", "educación", "responsabilidades", "logros", "trabajé", "proyectos", "que", "con", "en"]
+    scores["Spanish"] = sum(1 for word in es_words if word in text_l)
+    
+    # Portuguese markers
+    pt_words = ["experiência", "habilidades", "educação", "responsabilidades", "conquistas", "trabalhei", "projetos", "que", "com", "em"]
+    scores["Portuguese"] = sum(1 for word in pt_words if word in text_l)
+    
+    # French markers
+    fr_words = ["expérience", "compétences", "éducation", "responsabilités", "réalisations", "travaillé", "projets", "que", "avec", "dans"]
+    scores["French"] = sum(1 for word in fr_words if word in text_l)
+    
+    # German markers
+    de_words = ["erfahrung", "fähigkeiten", "bildung", "verantwortung", "erfolge", "arbeitete", "projekte", "und", "mit", "bei"]
+    scores["German"] = sum(1 for word in de_words if word in text_l)
+    
+    # Return language with highest score
+    max_lang = max(scores, key=scores.get)
+    
+    # If no matches at all, default to English
+    if scores[max_lang] == 0:
+        return "English"
+    
+    return max_lang
 # ------------------------------------------------------------
 # TEMPLATE LOADING (LIGHT BLEND – SAFE)
 # ------------------------------------------------------------
@@ -170,7 +201,6 @@ def sanitize_output(text: str) -> str:
     text = soft_normalize_headings(text)
     return text.strip()
 
-
 # ------------------------------------------------------------
 # MAIN CV REWRITER — OPTION B (Enhanced Light Blend)
 # ------------------------------------------------------------
@@ -203,8 +233,11 @@ def rewrite_cv(cv_text: str, job_ad: str, style: str) -> str:
     # Load a template snippet safely
     template_snippet = load_random_template(lang_code)
 
-    # Build LLM prompt
-    prompt = f"""
+    # Build LLM prompt - detect if ATS keywords are being injected
+    has_ats_guidance = "## INTERNAL LLM GUIDANCE" in job_ad
+
+    if has_ats_guidance:
+        prompt = f"""
 Rewrite the following CV using the style: {style}.
 
 CV:
@@ -217,6 +250,36 @@ Template snippet (light tone only):
 {template_snippet or "[No template available]"}
 
 STRICT RULES:
+- Write the rewritten CV in the SAME language as the original CV ({lang.capitalize()}).
+- DO NOT invent roles, dates, employers, or achievements.
+- DO NOT fabricate metrics or responsibilities.
+- Keep all facts exactly as they appear in the CV.
+- IMPORTANT: The job ad contains a list of ATS keywords that are MISSING from the CV.
+- You MUST naturally incorporate these keywords into existing CV sections where they fit.
+- Match keywords to the candidate's actual experience - if they used Python, ensure "Python" appears.
+- If they managed projects, ensure "project management" appears.
+- Weave keywords naturally into bullet points and descriptions.
+- DO NOT create a separate "keywords" section.
+- DO NOT add fake experience just to include keywords.
+- DO NOT output markdown (no **, ##, _, *, ---).
+- Use plain text headings only.
+- Return ONLY the rewritten CV.
+"""
+    else:
+        prompt = f"""
+Rewrite the following CV using the style: {style}.
+
+CV:
+{cv_text}
+
+Job Ad (for relevance and alignment):
+{job_ad}
+
+Template snippet (light tone only):
+{template_snippet or "[No template available]"}
+
+STRICT RULES:
+- Write the rewritten CV in the SAME language as the original CV ({lang.capitalize()}).
 - DO NOT invent roles, dates, employers, or achievements.
 - DO NOT fabricate metrics or responsibilities.
 - Keep all facts exactly as they appear in the CV.
@@ -240,8 +303,6 @@ STRICT RULES:
     # Final ATS-safe processing
     cleaned = sanitize_output(rewritten)
     return cleaned
-
-
 # ------------------------------------------------------------
 # PUBLIC WRAPPERS — compatibility with app.py
 # ------------------------------------------------------------

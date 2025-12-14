@@ -6,6 +6,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 import streamlit as st
 import PyPDF2
+from io import BytesIO
 
 from backend.ai_tools import extract_keywords
 from backend.cv_parser import parse_cv_text
@@ -14,6 +15,88 @@ from backend.cv_rewriter import rewrite_cv, detect_cv_language, detect_language_
 from backend.cover_letter import generate_cover_letter
 from backend.translator import translate_text
 from backend.language_utils import ui_text
+from reportlab.lib.pagesizes import letter
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+from reportlab.lib.units import inch
+
+def make_pdf_proper(text: str, filename: str = "document.pdf"):
+    """
+    Creates a properly formatted PDF with text wrapping.
+    No text cutoff issues.
+    """
+    if not text or not isinstance(text, str):
+        # Return empty buffer if invalid input
+        buffer = BytesIO()
+        buffer.write(b'')
+        buffer.seek(0)
+        return buffer
+    
+    buffer = BytesIO()
+    
+    # Import inside function to avoid namespace issues
+    from reportlab.lib.pagesizes import letter as page_letter
+    from reportlab.lib.units import inch as page_inch
+    
+    try:
+        # Create PDF with standard letter size
+        doc = SimpleDocTemplate(
+            buffer,
+            pagesize=page_letter,
+            rightMargin=0.75*page_inch,
+            leftMargin=0.75*page_inch,
+            topMargin=0.75*page_inch,
+            bottomMargin=0.75*page_inch
+        )
+        
+        # Container for PDF elements
+        story = []
+        
+        # Get default styles
+        styles = getSampleStyleSheet()
+        
+        # Create a custom style for body text
+        normal_style = ParagraphStyle(
+            'CustomNormal',
+            parent=styles['Normal'],
+            fontSize=10,
+            leading=14,
+            spaceAfter=6,
+        )
+        
+        # Split text into paragraphs and add to PDF
+        paragraphs = text.split('\n')
+        
+        for para_text in paragraphs:
+            if para_text.strip():
+                # Escape special XML/HTML characters that break ReportLab
+                para_text = (para_text
+                    .replace('&', '&amp;')
+                    .replace('<', '&lt;')
+                    .replace('>', '&gt;')
+                )
+                try:
+                    # Create paragraph with automatic wrapping
+                    para = Paragraph(para_text, normal_style)
+                    story.append(para)
+                except Exception as e:
+                    # If paragraph fails, skip it
+                    continue
+            else:
+                # Add small space for empty lines
+                story.append(Spacer(1, 0.1*page_inch))
+        
+        # Build PDF
+        doc.build(story)
+        
+    except Exception as e:
+        # If PDF generation fails completely, return empty buffer
+        print(f"PDF generation error: {e}")
+        buffer = BytesIO()
+        buffer.write(b'')
+    
+    buffer.seek(0)
+    return buffer
 
 # --------------------------------------------------------------
 # BASIC SETUP
@@ -311,46 +394,34 @@ if result:
     st.metric(ui_text("match_score", ui_lang), f"{score}%")
 
     # ----------------------------------------------------------
-    # FIXED MISSING SKILLS (NO DOUBLE TRANSLATION)
-    # CV-language output only for the missing skills list
+    # MISSING SKILLS CARD — LABEL IN UI LANGUAGE, CONTENT IN JOB-AD LANGUAGE
     # ----------------------------------------------------------
     if missing:
-        # Normalize detect_cv_language() output
-        lang_lower = str(cv_lang).strip().lower()
+        # Get the label in UI language
+        label = ui_text("missing_skills", ui_lang)
 
-        if lang_lower in ["fi", "finnish"]:
-            cv_lang_detected = "Finnish"
-        elif lang_lower in ["en", "english"]:
-            cv_lang_detected = "English"
-        elif lang_lower in ["sv", "swedish"]:
-            cv_lang_detected = "Swedish"
-        elif lang_lower in ["es", "spanish"]:
-            cv_lang_detected = "Spanish"
-        elif lang_lower in ["pt", "pt-br", "portuguese", "português", "portugais"]:
-            cv_lang_detected = "Portuguese"
-        elif lang_lower in ["fr", "french", "français"]:
-            cv_lang_detected = "French"
-        elif lang_lower in ["de", "german", "deutsch"]:
-            cv_lang_detected = "German"
-        else:
-            cv_lang_detected = "English"
-
-        # Create the missing skills text ONLY (no explanatory prefix)
+        # Detect job-ad language for translating the actual skills
+        job_lang_name = detect_language_of_job_ad(job_ad) if job_ad else "English"
+        
+        # Create the missing skills text
         missing_sentence = ", ".join(missing)
+        
+        # Only translate if languages are different
+        cv_lang_name = detect_cv_language(cv_text) if cv_text else "English"
+        
+        # If job ad and CV are in the same language, no translation needed
+        if job_lang_name.lower() == cv_lang_name.lower():
+            translated_missing = missing_sentence
+        else:
+            translated_missing = translate_text(missing_sentence, job_lang_name)
 
-        # Translate ONLY the list — not any label
-        translated_missing = translate_text(
-            missing_sentence,
-            cv_lang_detected
-        )
-
-        # UI label stays in UI language
-        st.warning(ui_text("missing_skills", ui_lang) + " " + translated_missing)
+        # Display: UI language label + job-ad language content
+        st.warning(f"**{label}:** {translated_missing}")
     else:
         st.success("✔")
 
     # ----------------------------------------------------------
-    # SUMMARY TRANSLATION (FIXED FOR PORTUGUESE + UI SWITCHING)
+    # SUMMARY TRANSLATION (UNCHANGED — STAYS IN UI LANGUAGE)
     # ----------------------------------------------------------
     st.subheader(ui_text("summary", ui_lang))
 
@@ -440,12 +511,15 @@ if result:
     if st.button(ui_text("rewrite_button", ui_lang), key="rewrite_btn"):
         with st.spinner("Rewriting your CV…"):
 
-            # If ATS missing keywords exist, inject them into the rewrite prompt
             rewrite_boost = st.session_state.get("rewrite_hint", "")
             if rewrite_boost:
                 boosted_job_ad = (
                     job_ad.strip()
-                    + "\n\nIMPORTANT — Include or emphasize these missing keywords:\n"
+                    + "\n\n"
+                    + "## INTERNAL LLM GUIDANCE (Do NOT include this section verbatim in the CV output)\n"
+                    + "The following keywords are important for ATS alignment. Use them naturally and contextually.\n"
+                    + "Do NOT copy this list into the CV. Do NOT create a section for it.\n"
+                    + "KEYWORDS:\n"
                     + rewrite_boost
                 )
             else:
@@ -454,10 +528,10 @@ if result:
             rewritten = rewrite_cv(cv_text, boosted_job_ad, cleaned_format)
 
             st.session_state["rewritten"] = rewritten
-            st.session_state["rewrite_hint"] = ""  # Clear after use
+            st.session_state["rewrite_hint"] = ""
 
 # ----------------------------------------------------------
-# SHOW REWRITTEN CV + ATS HINT IF PRESENT
+# SHOW REWRITTEN CV + TXT DOWNLOAD ONLY
 # ----------------------------------------------------------
 if "rewritten" in st.session_state:
     st.text_area(
@@ -466,20 +540,41 @@ if "rewritten" in st.session_state:
         height=350
     )
 
-    # If ATS missing keyword hint exists, show it visually
+    # Two download buttons side by side
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.download_button(
+            label=ui_text("download_txt", ui_lang),
+            data=st.session_state["rewritten"],  # ← FIXED: Use "rewritten" not "letter"
+            file_name="cv.txt",                  # ← FIXED: Correct filename
+            mime="text/plain",
+            key="dl_cv_txt"                      # ← FIXED: Correct key
+        )
+
+    with col2:
+        # Generate PDF only when button is ready to download
+        st.download_button(
+            label=ui_text("download_pdf", ui_lang),
+            data=make_pdf_proper(st.session_state["rewritten"]),  # ← FIXED
+            file_name="cv.pdf",                                     # ← FIXED
+            mime="application/pdf",
+            key="dl_cv_pdf"                                        # ← FIXED
+        )
+        
+    # ATS hint preview
     if st.session_state.get("rewrite_hint"):
         st.info(
             ui_text("ats_missing_add_these", ui_lang)
             + ": "
             + st.session_state["rewrite_hint"]
         )
-
 # --------------------------------------------------------------
 # STEP 4.1 — ATS COMPATIBILITY REPORT — CV SCORE & FIXES
 # --------------------------------------------------------------
 from backend.ats_scanner import run_ats_analysis
 
-st.markdown("### ATS Compatibility Report — CV Score & Fixes")
+st.markdown(f"### {ui_text('step4_1_ats_header', ui_lang)}")
 
 # Require a rewritten CV
 if "rewritten" not in st.session_state or not st.session_state["rewritten"].strip():
@@ -489,15 +584,21 @@ else:
     rewritten_cv = st.session_state["rewritten"]
     job_keywords = st.session_state.get("job_keywords", set())
 
-    # UI: scan button
+    # ----------------------------------------------------------
+    # RUN ATS BUTTON
+    # ----------------------------------------------------------
     if st.button(ui_text("ats_scan_button", ui_lang), key="ats_scan_btn"):
         with st.spinner(ui_text("processing_cv", ui_lang)):
-            ats = run_ats_analysis(job_keywords, rewritten_cv)
-            st.session_state["ats_result"] = ats
+            try:
+                ats = run_ats_analysis(job_keywords, rewritten_cv)
+                st.session_state["ats_result"] = ats
+            except Exception as e:
+                st.error(f"ATS scan failed: {e}")
 
     ats_result = st.session_state.get("ats_result")
 
     if ats_result:
+
         final_score = ats_result["final_score"]
         keyword_score = ats_result["keyword_score"]
         formatting_score = ats_result["formatting_score"]
@@ -505,19 +606,14 @@ else:
         missing = ats_result["missing_keywords"]
         job_kw = ats_result["job_keywords"]
 
-        # ----------------------------------------------------------
-        # SCORE COLOR (neon)
-        # ----------------------------------------------------------
+        # ---------- SCORE CIRCLE ----------
         if final_score < 60:
-            score_color = "#FF3B30"  # red
+            score_color = "#FF3B30"
         elif final_score < 80:
-            score_color = "#FF9500"  # orange
+            score_color = "#FF9500"
         else:
-            score_color = "#34C759"  # neon green
+            score_color = "#34C759"
 
-        # ----------------------------------------------------------
-        # SCORE CIRCLE UI
-        # ----------------------------------------------------------
         st.markdown(f"""
         <div style="
             width: 160px;
@@ -541,14 +637,11 @@ else:
             unsafe_allow_html=True
         )
 
-        # ----------------------------------------------------------
-        # KEYWORD SECTION (Found / Missing)
-        # ----------------------------------------------------------
+        # ---------- FOUND / MISSING ----------
         st.markdown(f"### {ui_text('ats_keyword_coverage', ui_lang)}")
 
         colA, colB = st.columns(2)
 
-        # Found keywords (green chips)
         with colA:
             st.markdown(f"**{ui_text('ats_keywords_found', ui_lang)}**")
             if found:
@@ -560,9 +653,11 @@ else:
                 )
                 st.markdown(tags, unsafe_allow_html=True)
             else:
-                st.markdown(f"<span style='color:#999;'>{ui_text('ats_tag_none', ui_lang)}</span>", unsafe_allow_html=True)
+                st.markdown(
+                    f"<span style='color:#999;'>{ui_text('ats_tag_none', ui_lang)}</span>",
+                    unsafe_allow_html=True
+                )
 
-        # Missing keywords (red chips)
         with colB:
             st.markdown(f"**{ui_text('ats_keywords_missing', ui_lang)}**")
             if missing:
@@ -574,11 +669,12 @@ else:
                 )
                 st.markdown(tags, unsafe_allow_html=True)
             else:
-                st.markdown(f"<span style='color:#32D74B;'>{ui_text('ats_passed', ui_lang)}</span>", unsafe_allow_html=True)
+                st.markdown(
+                    f"<span style='color:#32D74B;'>{ui_text('ats_passed', ui_lang)}</span>",
+                    unsafe_allow_html=True
+                )
 
-        # ----------------------------------------------------------
-        # FORMATTING BREAKDOWN CARD
-        # ----------------------------------------------------------
+        # ---------- FORMATTING CARD ----------
         st.markdown(f"### {ui_text('ats_formatting_quality', ui_lang)}")
 
         card_html = f"""
@@ -595,51 +691,43 @@ else:
             <p><strong>{ui_text('ats_overall_rating', ui_lang)}:</strong> {formatting_score}/10</p>
         </div>
         """
-
         st.markdown(card_html, unsafe_allow_html=True)
 
-        # ----------------------------------------------------------
-        # SAFETY EXPLANATION BOX (NEW)
-        # ----------------------------------------------------------
+        # ---------- FIX & REGENERATE ----------
         if missing:
             st.warning(
-                "⚠️ This automatic rewrite will overwrite your current CV rewrite. "
-                "Review the new version before downloading."
+                ui_text("ats_overwrite_warning", ui_lang)
             )
 
-        # ----------------------------------------------------------
-        # FIX & AUTO-REGENERATE BUTTON (NEW PREMIUM BEHAVIOR)
-        # ----------------------------------------------------------
-        if missing:
             if st.button(ui_text("ats_fix_and_regenerate", ui_lang), key="ats_fix_btn"):
 
-                # 1. Inject missing keywords directly
                 injected_job_ad = (
                     st.session_state["job_ad"].strip()
-                    + "\n\nIMPORTANT — Include or emphasize these missing ATS keywords:\n"
+                    + "\n\n"
+                    + "## INTERNAL LLM GUIDANCE (Do NOT include this section verbatim in the CV output)\n"
+                    + "Use these keywords naturally; do not output this list.\n"
+                    + "KEYWORDS:\n"
                     + ", ".join(missing)
                 )
 
-                # 2. Rewrite instantly
                 with st.spinner("Regenerating your CV with missing ATS keywords…"):
-                    updated_cv = rewrite_cv(
-                        st.session_state["cv_text"],
-                        injected_job_ad,
-                        "Hybrid"
-                    )
+                    try:
+                        updated_cv = rewrite_cv(
+                            st.session_state["cv_text"],
+                            injected_job_ad,
+                            "Hybrid"
+                        )
+                    except Exception as e:
+                        st.error(f"Rewrite failed: {e}")
+                        updated_cv = st.session_state["rewritten"]
 
-                # 3. Save rewritten version
                 st.session_state["rewritten"] = updated_cv
 
-                # 4. Auto-rerun ATS
                 with st.spinner(ui_text("processing_cv", ui_lang)):
                     new_ats = run_ats_analysis(job_keywords, updated_cv)
                     st.session_state["ats_result"] = new_ats
 
-                # 5. Show confirmation
                 st.success(ui_text("ats_scan_complete", ui_lang))
-
-                # 6. Force UI refresh
                 st.rerun()
 
 # --------------------------------------------------------------
@@ -653,6 +741,9 @@ if result:
             letter = generate_cover_letter(cv_text, job_ad.strip())
             st.session_state["letter"] = letter
 
+# --------------------------------------------------------------
+# SHOW COVER LETTER + TXT DOWNLOAD ONLY
+# --------------------------------------------------------------
 if "letter" in st.session_state:
     st.text_area(
         ui_text("step5_cover_letter", ui_lang) + ":",
@@ -660,6 +751,26 @@ if "letter" in st.session_state:
         height=350
     )
 
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.download_button(
+            label=ui_text("download_txt", ui_lang),
+            data=st.session_state["letter"],
+            file_name="cover_letter.txt",
+            mime="text/plain",
+            key="dl_cover_txt"
+        )
+
+    with col2:
+        # Generate PDF only when button is ready to download
+        st.download_button(
+            label=ui_text("download_pdf", ui_lang),
+            data=make_pdf_proper(st.session_state["letter"]),  # Called inline
+            file_name="cover_letter.pdf",
+            mime="application/pdf",
+            key="dl_cover_pdf"
+        )
 # --------------------------------------------------------------
 # STEP 6 — CV TRANSLATOR
 # --------------------------------------------------------------
@@ -678,6 +789,10 @@ if cv_text:
             tcv = translate_text(cv_text, internal_choice)
             st.session_state["translated_cv"] = tcv
 
+
+# --------------------------------------------------------------
+# SHOW TRANSLATED CV + TXT DOWNLOAD ONLY
+# --------------------------------------------------------------
 if "translated_cv" in st.session_state:
     st.text_area(
         ui_text("step6_translate_cv", ui_lang) + ":",
@@ -685,6 +800,25 @@ if "translated_cv" in st.session_state:
         height=300
     )
 
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.download_button(
+            label=ui_text("download_txt", ui_lang),
+            data=st.session_state["translated_cv"],
+            file_name="translated_cv.txt",
+            mime="text/plain",
+            key="dl_translated_cv_txt"
+        )
+    
+    with col2:
+        st.download_button(
+            label=ui_text("download_pdf", ui_lang),
+            data=make_pdf_proper(st.session_state["translated_cv"]),  # ← Call inline
+            file_name="translated_cv.pdf",
+            mime="application/pdf",
+            key="dl_translated_cv_pdf"
+        )
 # --------------------------------------------------------------
 # STEP 7 — COVER LETTER TRANSLATOR
 # --------------------------------------------------------------
@@ -703,12 +837,35 @@ if "letter" in st.session_state:
             new_letter = translate_text(st.session_state["letter"], internal_choice)
             st.session_state["translated_letter"] = new_letter
 
+# --------------------------------------------------------------
+# SHOW TRANSLATED COVER LETTER + TXT DOWNLOAD ONLY
+# --------------------------------------------------------------
 if "translated_letter" in st.session_state:
     st.text_area(
         ui_text("step7_translate_cover", ui_lang) + ":",
         st.session_state["translated_letter"],
         height=300
     )
+
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.download_button(
+            label=ui_text("download_txt", ui_lang),
+            data=st.session_state["translated_letter"],
+            file_name="translated_cover_letter.txt",
+            mime="text/plain",
+            key="dl_translated_letter_txt"
+        )
+    
+    with col2:
+        st.download_button(
+            label=ui_text("download_pdf", ui_lang),
+            data=make_pdf_proper(st.session_state["translated_letter"]),  # ← Call inline
+            file_name="translated_cover_letter.pdf",
+            mime="application/pdf",
+            key="dl_translated_letter_pdf"
+        )
 
 # --------------------------------------------------------------
 # STEP 8 — INTERVIEW PREP
@@ -756,7 +913,7 @@ if result:
             "Portuguese": {
                 "behavioral": "Perguntas Comportamentais (STAR)",
                 "cultural": "Perguntas de Adequação Cultural",
-                "leadership": "Perguntas de Liderança y Responsabilidad",  # Keep as-is (your original)
+                "leadership": "Perguntas de Liderança y Responsabilidad",
                 "redflags": "Possíveis pontos fracos do CV",
                 "salary": "Perguntas sobre salário y expectativas",
                 "tips": "Dicas finais do especialista",
@@ -807,9 +964,157 @@ if result:
 
         st.session_state["interview_prep"] = response.choices[0].message.content.strip()
 
+# --------------------------------------------------------------
+# SHOW INTERVIEW PREP + TXT DOWNLOAD ONLY
+# --------------------------------------------------------------
 if "interview_prep" in st.session_state:
     st.text_area(
         ui_text("step8_interview", ui_lang) + ":",
         st.session_state["interview_prep"],
         height=500
     )
+
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.download_button(
+            label=ui_text("download_txt", ui_lang),
+            data=st.session_state["interview_prep"],
+            file_name="interview_prep.txt",
+            mime="text/plain",
+            key="dl_interview_txt"
+        )
+    
+    with col2:
+        st.download_button(
+            label=ui_text("download_pdf", ui_lang),
+            data=make_pdf_proper(st.session_state["interview_prep"]),  # ← Call inline
+            file_name="interview_prep.pdf",
+            mime="application/pdf",
+            key="dl_interview_pdf"
+        )
+# --------------------------------------------------------------
+# STEP 11 — BIAS & AUTHENTICITY AUDITOR
+# --------------------------------------------------------------
+
+from backend.bias_auditor import audit_text
+
+st.markdown(f"### {ui_text('step11_bias_header', ui_lang)}")
+
+# Determine which text we audit
+text_to_audit = ""
+
+if "rewritten" in st.session_state and st.session_state["rewritten"]:
+    text_to_audit = st.session_state["rewritten"]
+elif "letter" in st.session_state and st.session_state["letter"]:
+    text_to_audit = st.session_state["letter"]
+else:
+    st.info(ui_text("ats_no_rewritten_cv", ui_lang))
+    text_to_audit = ""
+
+audit_input = st.text_area(
+    ui_text("bias_text_to_audit", ui_lang),
+    value=text_to_audit,
+    height=300
+)
+
+run_audit = st.button(ui_text("bias_run_button", ui_lang))
+
+if run_audit and audit_input.strip():
+
+    result = audit_text(audit_input)
+
+    st.subheader(ui_text("bias_score_label", ui_lang))
+    st.metric(
+        label=ui_text("bias_score_label", ui_lang),
+        value=f"{result['final_score']} / 100"
+    )
+
+    st.subheader(ui_text("bias_breakdown_header", ui_lang))
+    st.table({
+        ui_text("bias_category_header", ui_lang): [
+            ui_text("bias_slop", ui_lang),
+            ui_text("bias_bias", ui_lang),
+            ui_text("bias_length", ui_lang)
+        ],
+        ui_text("bias_score_header", ui_lang): [
+            result["slop_score"],
+            result["bias_score"],
+            result["length_score"]
+        ]
+    })
+
+    st.subheader(ui_text("bias_found_issues", ui_lang))
+    if result["issues"]:
+        for issue in result["issues"]:
+            translated_issue = translate_text(issue, TRANSLATOR_LANGS[ui_lang])
+            st.write(f"- {translated_issue}")
+
+    else:
+        st.write(ui_text("bias_no_issues", ui_lang))
+
+    # TXT download of the audited text
+    st.download_button(
+        label=ui_text("download_txt", ui_lang),
+        data=audit_input,
+        file_name="audited_text.txt",
+        mime="text/plain",
+        key="dl_audit_txt"
+    )
+
+    st.download_button(
+        label=ui_text("download_pdf", ui_lang),
+        data=make_pdf_proper(audit_input),
+        file_name="audited_text.pdf",
+        mime="application/pdf",
+        key="dl_audit_pdf"
+    )
+
+# --------------------------------------------------------------
+# OPTIONAL — HUMAN QUIRKS & VARIATIONS
+# --------------------------------------------------------------
+enable_quirks = st.checkbox(ui_text("bias_add_quirks", ui_lang))
+
+if enable_quirks and audit_input.strip():
+
+    modified = audit_input
+
+    replacements = [
+        ("Additionally,", "Also,"),
+        ("Furthermore,", "Plus,"),
+        ("In addition,", "On top of that,"),
+        ("Moreover,", "What's more,"),
+    ]
+    for a, b in replacements:
+        modified = modified.replace(a, b)
+
+    modified = modified.replace(". ", ".  ")
+
+    st.session_state["quirky_text"] = modified
+    st.write(f"### {ui_text('bias_modified_header', ui_lang)}")
+    st.text_area(
+        ui_text("bias_modified_label", ui_lang),
+        value=st.session_state["quirky_text"],
+        height=300
+    )
+
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.download_button(
+            label=ui_text("download_txt", ui_lang),
+            data=st.session_state["quirky_text"],
+            file_name="modified_text.txt",
+            mime="text/plain",
+            key="dl_modified_txt"
+        )
+
+    with col2:
+        st.download_button(
+            label=ui_text("download_pdf", ui_lang),
+            data=make_pdf_proper(st.session_state["quirky_text"]),
+            file_name="modified_text.pdf",
+            mime="application/pdf",
+            key="dl_modified_pdf"
+        )

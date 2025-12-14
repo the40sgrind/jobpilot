@@ -19,88 +19,88 @@ UI_TEXT = {
     # STEP HEADERS
     # ----------------------------------------------------------
     "step1_jobad": {
-        "en": "1️⃣ Paste the Job Advertisement",
-        "fi": "1️⃣ Kopioi ja liitä työpaikkailmoitus",
-        "sv": "1️⃣ Klistra in jobbannonsen",
-        "es": "1️⃣ Pega la oferta de trabajo",
-        "pt-br": "1️⃣ Cole a vaga de emprego",
-        "fr": "1️⃣ Collez l'offre d’emploi",
-        "de": "1️⃣ Fügen Sie die Stellenausschreibung ein"
+        "en": "1. Paste the Job Advertisement",
+        "fi": "1. Kopioi ja liitä työpaikkailmoitus",
+        "sv": "1. Klistra in jobbannonsen",
+        "es": "1. Pega la oferta de trabajo",
+        "pt-br": "1. Cole a vaga de emprego",
+        "fr": "1. Collez l'offre d’emploi",
+        "de": "1. Fügen Sie die Stellenausschreibung ein"
     },
     "step2_upload": {
-        "en": "2️⃣ Upload Your CV",
-        "fi": "2️⃣ Lataa CV",
-        "sv": "2️⃣ Ladda upp ditt CV",
-        "es": "2️⃣ Sube tu CV",
-        "pt-br": "2️⃣ Envie seu CV",
-        "fr": "2️⃣ Téléversez votre CV",
-        "de": "2️⃣ Laden Sie Ihren Lebenslauf hoch"
+        "en": "2. Upload Your CV",
+        "fi": "2. Lataa CV",
+        "sv": "2. Ladda upp ditt CV",
+        "es": "2. Sube tu CV",
+        "pt-br": "2. Envie seu CV",
+        "fr": "2. Téléversez votre CV",
+        "de": "2. Laden Sie Ihren Lebenslauf hoch"
     },
     "step3_analysis": {
-        "en": "3️⃣ Match Analysis (AI)",
-        "fi": "3️⃣ Vastaavuusanalyysi (AI)",
-        "sv": "3️⃣ Matchningsanalys (AI)",
-        "es": "3️⃣ Análisis de compatibilidad (IA)",
-        "pt-br": "3️⃣ Análise de compatibilidade (IA)",
-        "fr": "3️⃣ Analyse de correspondance (IA)",
-        "de": "3️⃣ Übereinstimmungsanalyse (KI)"
+        "en": "3. Match Analysis (AI)",
+        "fi": "3. Vastaavuusanalyysi (AI)",
+        "sv": "3. Matchningsanalys (AI)",
+        "es": "3. Análisis de compatibilidad (IA)",
+        "pt-br": "3. Análise de compatibilidade (IA)",
+        "fr": "3. Analyse de correspondance (IA)",
+        "de": "3. Übereinstimmungsanalyse (KI)"
     },
     "step4_rewrite": {
-        "en": "4️⃣ Rewrite Your CV",
-        "fi": "4️⃣ Kirjoita CV uudelleen",
-        "sv": "4️⃣ Skriv om ditt CV",
-        "es": "4️⃣ Reescribe tu CV",
-        "pt-br": "4️⃣ Reescreva seu CV",
-        "fr": "4️⃣ Réécrivez votre CV",
-        "de": "4️⃣ Schreiben Sie Ihren Lebenslauf neu"
+        "en": "4. Rewrite Your CV",
+        "fi": "4. Kirjoita CV uudelleen",
+        "sv": "4. Skriv om ditt CV",
+        "es": "4. Reescribe tu CV",
+        "pt-br": "4. Reescreva seu CV",
+        "fr": "4. Réécrivez votre CV",
+        "de": "4. Schreiben Sie Ihren Lebenslauf neu"
     },
 
-    # ⭐ NEW PREMIUM ATS STEP 4.1 (header stays English in all languages)
+    # ⭐ STEP 4.1 (translated + numbered)
     "step4_1_ats_header": {
-        "en": "ATS Compatibility Report — CV Score & Fixes",
-        "fi": "ATS Compatibility Report — CV Score & Fixes",
-        "sv": "ATS Compatibility Report — CV Score & Fixes",
-        "es": "ATS Compatibility Report — CV Score & Fixes",
-        "pt-br": "ATS Compatibility Report — CV Score & Fixes",
-        "fr": "ATS Compatibility Report — CV Score & Fixes",
-        "de": "ATS Compatibility Report — CV Score & Fixes"
+        "en": "4.1 ATS Compatibility Report — CV Score & Fixes",
+        "fi": "4.1 ATS-yhteensopivuusraportti — CV-pisteet ja korjaukset",
+        "sv": "4.1 ATS-kompatibilitetsrapport — CV-poäng och förbättringar",
+        "es": "4.1 Informe de compatibilidad ATS — Puntuación del CV y mejoras",
+        "pt-br": "4.1 Relatório de compatibilidade ATS — Pontuação e ajustes do CV",
+        "fr": "4.1 Rapport de compatibilité ATS — Score du CV et correctifs",
+        "de": "4.1 ATS-Kompatibilitätsbericht — CV-Score und Optimierungen"
     },
 
     "step5_cover_letter": {
-        "en": "5️⃣ Cover Letter",
-        "fi": "5️⃣ Hakemuskirje",
-        "sv": "5️⃣ Personligt brev",
-        "es": "5️⃣ Carta de presentación",
-        "pt-br": "5️⃣ Carta de apresentação",
-        "fr": "5️⃣ Lettre de motivation",
-        "de": "5️⃣ Anschreiben"
+        "en": "5. Cover Letter",
+        "fi": "5. Hakemuskirje",
+        "sv": "5. Personligt brev",
+        "es": "5. Carta de presentación",
+        "pt-br": "5. Carta de apresentação",
+        "fr": "5. Lettre de motivation",
+        "de": "5. Anschreiben"
     },
     "step6_translate_cv": {
-        "en": "6️⃣ Translate Your CV",
-        "fi": "6️⃣ Käännä CV",
-        "sv": "6️⃣ Översätt ditt CV",
-        "es": "6️⃣ Traduce tu CV",
-        "pt-br": "6️⃣ Traduza seu CV",
-        "fr": "6️⃣ Traduisez votre CV",
-        "de": "6️⃣ Übersetzen Sie Ihren Lebenslauf"
+        "en": "6. Translate Your CV",
+        "fi": "6. Käännä CV",
+        "sv": "6. Översätt ditt CV",
+        "es": "6. Traduce tu CV",
+        "pt-br": "6. Traduza seu CV",
+        "fr": "6. Traduisez votre CV",
+        "de": "6. Übersetzen Sie Ihren Lebenslauf"
     },
     "step7_translate_cover": {
-        "en": "7️⃣ Translate Cover Letter",
-        "fi": "7️⃣ Käännä hakemuskirje",
-        "sv": "7️⃣ Översätt personligt brev",
-        "es": "7️⃣ Traduce la carta de presentación",
-        "pt-br": "7️⃣ Traduza a carta de apresentação",
-        "fr": "7️⃣ Traduisez la lettre de motivation",
-        "de": "7️⃣ Übersetzen Sie das Anschreiben"
+        "en": "7. Translate Cover Letter",
+        "fi": "7. Käännä hakemuskirje",
+        "sv": "7. Översätt personligt brev",
+        "es": "7. Traduce la carta de presentación",
+        "pt-br": "7. Traduza a carta de apresentação",
+        "fr": "7. Traduisez la lettre de motivation",
+        "de": "7. Übersetzen Sie das Anschreiben"
     },
     "step8_interview": {
-        "en": "8️⃣ Interview Preparation (AI)",
-        "fi": "8️⃣ Haastatteluun valmistautuminen (AI)",
-        "sv": "8️⃣ Intervju­förberedelse (AI)",
-        "es": "8️⃣ Preparación para entrevista (IA)",
-        "pt-br": "8️⃣ Preparação para entrevista (IA)",
-        "fr": "8️⃣ Préparation à l’entretien (IA)",
-        "de": "8️⃣ Vorbereitung auf das Vorstellungsgespräch (KI)"
+        "en": "8. Interview Preparation (AI)",
+        "fi": "8. Haastatteluun valmistautuminen (AI)",
+        "sv": "8. Intervju­förberedelse (AI)",
+        "es": "8. Preparación para entrevista (IA)",
+        "pt-br": "8. Preparação para entrevista (IA)",
+        "fr": "8. Préparation à l’entretien (IA)",
+        "de": "8. Vorbereitung auf das Vorstellungsgespräch (KI)"
     },
 
     # ----------------------------------------------------------
@@ -393,6 +393,17 @@ UI_TEXT = {
         "fr": "Mots-clés de l’offre d’emploi",
         "de": "Schlüsselwörter aus der Stellenausschreibung"
     },
+    
+    "ats_overwrite_warning": {
+        "en": "⚠️ This automatic rewrite will overwrite your current CV rewrite.",
+        "fi": "⚠️ Tämä automaattinen uudelleenkirjoitus korvaa nykyisen CV:si.",
+        "sv": "⚠️ Denna automatiska omskrivning kommer att skriva över ditt nuvarande CV.",
+        "es": "⚠️ Esta reescritura automática sobrescribirá tu CV actual.",
+        "pt-br": "⚠️ Esta reescrita automática substituirá seu CV atual.",
+        "fr": "⚠️ Cette réécriture automatique remplacera votre CV actuel.",
+        "de": "⚠️ Dieses automatische Umschreiben überschreibt Ihren aktuellen Lebenslauf.",
+    },
+    
     "ats_keywords_found": {
         "en": "Found in Your CV",
         "fi": "Löytyi CV:stäsi",
@@ -769,8 +780,175 @@ UI_TEXT = {
         "pt-br": "Dicas para melhorar sua pontuação ATS:",
         "fr": "Conseils pour améliorer votre score ATS :",
         "de": "Tipps zur Verbesserung Ihrer ATS-Bewertung:"
-    }
+    },
 
+    # ----------------------------------------------------------
+    # STEP 11 — BIAS & AUTHENTICITY AUDITOR
+    # ----------------------------------------------------------
+    "step11_bias_header": {
+        "en": "9. Bias & Authenticity Auditor",
+        "fi": "9. Vinouma- ja aitousauditointi",
+        "sv": "9. Bias- och äkthetsgranskning",
+        "es": "9. Auditoría de sesgo y autenticidad",
+        "pt-br": "9. Auditoria de viés e autenticidade",
+        "fr": "9. Audit de biais et d’authenticité",
+        "de": "9. Bias- und Authentizitätsprüfung"
+    },
+
+    "bias_modified_header": {
+        "en": "Updated Text with Human Variations",
+        "fi": "Päivitetty teksti inhimillisillä variaatioilla",
+        "sv": "Uppdaterad text med mänskliga variationer",
+        "es": "Texto actualizado con variaciones humanas",
+        "pt-br": "Texto atualizado com variações humanas",
+        "fr": "Texte mis à jour avec variations humaines",
+        "de": "Aktualisierter Text mit menschlichen Variationen",
+    },
+
+    "bias_score_label": {
+        "en": "Bias Audit Score",
+        "fi": "Vinoumapisteet",
+        "sv": "Bias­poäng",
+        "es": "Puntuación de sesgo",
+        "pt-br": "Pontuação de viés",
+        "fr": "Score de biais",
+        "de": "Bias-Bewertung"
+    },
+    "bias_found_issues": {
+        "en": "Detected Issues",
+        "fi": "Havaitut ongelmat",
+        "sv": "Upptäckta problem",
+        "es": "Problemas detectados",
+        "pt-br": "Problemas detectados",
+        "fr": "Problèmes détectés",
+        "de": "Festgestellte Probleme"
+    },
+    "bias_no_issues": {
+        "en": "No issues detected.",
+        "fi": "Ei havaittuja ongelmia.",
+        "sv": "Inga problem upptäckta.",
+        "es": "No se detectaron problemas.",
+        "pt-br": "Nenhum problema detectado.",
+        "fr": "Aucun problème détecté.",
+        "de": "Keine Probleme festgestellt."
+    },
+    "bias_run_button": {
+        "en": "Run Bias Auditor 🧩",
+        "fi": "Suorita vinouma- ja aitousauditointi 🧩",
+        "sv": "Kör biasgranskning 🧩",
+        "es": "Ejecutar auditoría de sesgo 🧩",
+        "pt-br": "Executar auditoria de viés 🧩",
+        "fr": "Lancer l’audit de biais 🧩",
+        "de": "Bias-Prüfung starten 🧩"
+    },
+    "bias_breakdown_header": {
+        "en": "Score Breakdown",
+        "fi": "Pisteiden erittely",
+        "sv": "Poängfördelning",
+        "es": "Desglose de puntuación",
+        "pt-br": "Detalhamento da pontuação",
+        "fr": "Répartition des scores",
+        "de": "Punkteaufschlüsselung",
+    },
+
+    "bias_category_header": {
+        "en": "Category",
+        "fi": "Kategoria",
+        "sv": "Kategori",
+        "es": "Categoría",
+        "pt-br": "Categoria",
+        "fr": "Catégorie",
+        "de": "Kategorie",
+    },
+
+    "bias_score_header": {
+        "en": "Score",
+        "fi": "Pisteet",
+        "sv": "Poäng",
+        "es": "Puntuación",
+        "pt-br": "Pontuação",
+        "fr": "Score",
+        "de": "Punktzahl",
+    },
+
+    "bias_slop": {
+        "en": "Slop",
+        "fi": "AI-tyyli",
+        "sv": "AI-stil",
+        "es": "Estilo IA",
+        "pt-br": "Estilo IA",
+        "fr": "Style IA",
+        "de": "KI-Stil",
+    },
+
+    "bias_bias": {
+        "en": "Bias",
+        "fi": "Vinouma",
+        "sv": "Bias",
+        "es": "Sesgo",
+        "pt-br": "Viés",
+        "fr": "Biais",
+        "de": "Voreingenommenheit",
+    },
+    "download_txt": {
+    "en": "⬇️ Download as TXT",
+    "fi": "⬇️ Lataa TXT",
+    "sv": "⬇️ Ladda ner TXT",
+    "es": "⬇️ Descargar TXT",
+    "pt-br": "⬇️ Baixar TXT",
+    "fr": "⬇️ Télécharger TXT",
+    "de": "⬇️ TXT herunterladen",
+    },
+
+    "download_pdf": {
+        "en": "📄 Download as PDF",
+        "fi": "📄 Lataa PDF",
+        "sv": "📄 Ladda ner PDF",
+        "es": "📄 Descargar PDF",
+        "pt-br": "📄 Baixar PDF",
+        "fr": "📄 Télécharger PDF",
+        "de": "📄 PDF herunterladen",
+    },
+
+    "bias_text_to_audit": {
+        "en": "Text to Audit",
+        "fi": "Tarkastettava teksti",
+        "sv": "Text att granska",
+        "es": "Texto a auditar",
+        "pt-br": "Texto para auditar",
+        "fr": "Texte à auditer",
+        "de": "Zu prüfender Text",
+    },
+
+    "bias_modified_label": {
+        "en": "Modified",
+        "fi": "Muokattu",
+        "sv": "Modifierad",
+        "es": "Modificado",
+        "pt-br": "Modificado",
+        "fr": "Modifié",
+        "de": "Geändert",
+    },
+
+    "bias_add_quirks": {
+        "en": "Add human quirks & variations",
+        "fi": "Lisää inhimillisiä vivahteita ja variaatioita",
+        "sv": "Lägg till mänskliga nyanser och variationer",
+        "es": "Añadir matices y variaciones humanas",
+        "pt-br": "Adicionar variações e nuances humanas",
+        "fr": "Ajouter des nuances et variations humaines",
+        "de": "Menschliche Nuancen und Variationen hinzufügen"
+    },
+
+    "bias_length": {
+        "en": "Length/Authenticity",
+        "fi": "Pituus/Aitous",
+        "sv": "Längd/Äkthet",
+        "es": "Longitud/Autenticidad",
+        "pt-br": "Comprimento/Autenticidade",
+        "fr": "Longueur/Authenticité",
+        "de": "Länge/Authentizität",
+    }
 }
 
 
